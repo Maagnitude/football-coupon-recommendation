@@ -33,14 +33,13 @@ def validate_coupon(data):
                     "type": "object",
                     "properties": {
                         "event_id": {"type": "string"},
-                        "odds": {"type": "float"}}
+                        "odds": {"type": "number"}}
                     }
                 },
-            "stake": {"type": "float"},
+            "stake": {"type": "number"},
             "timestamp": {"type": "string"},
             "user_id": {"type": "integer"}
-        },
-        "required": ["event_id", "odds", "stake", "timestamp", "user_id"]
+        }
     }
     jsonschema.validate(data, schema)
     return data
@@ -51,7 +50,7 @@ def validate_event(data):
     schema = {
         "type": "object",
         "properties": {
-            "events": {
+            "event": {
                 "type": "array",
                 "items": {
                     "type": "object",
@@ -59,7 +58,7 @@ def validate_event(data):
                         "begin_timestamp": {"type": "string"},
                         "country": {"type": "string"},
                         "end_timestamp": {"type": "string"},
-                        "event_id": {"type": "integer"},
+                        "event_id": {"type": "string"},
                         "league": {"type": "string"},
                         "participants": {"type": "array", "items": {"type": "string"}},
                         "sport": {"type": "string"}
@@ -83,7 +82,9 @@ def get_coupons():
     try:
         user_data = validate_user(request.json)
         
-        event = [
+        print(f"User with ID: {user_data['user_id']} has validated schema.")
+        
+        events = [
             {
                 "begin_timestamp": "2020-02-08 18:00:00+00",
                 "country": "Czech Republic",
@@ -110,6 +111,12 @@ def get_coupons():
             }
         ]
         
+        event = {"event": events}
+        
+        event = validate_event(event)
+        
+        print(f"Event with ID: {event['event'][0]['event_id']} has validated schema.")
+        
         coupon = [
             {
                 "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4ce",
@@ -121,6 +128,11 @@ def get_coupons():
             }
             ]
         
+        if user_data['user_id'] % 2 == 0:
+            coupon = [coupon[0]]
+        else:
+            coupon = [coupon[1]]
+        
         output_data = {
             "coupon_id": "8bcc0f90-96e9-4f87-aeab-22aff8c278ae",
             "selections": coupon,
@@ -128,16 +140,11 @@ def get_coupons():
             "timestamp": "2020-01-01T01:05:01",
             "user_id": user_data["user_id"]
             }
-        
-        # if user_data["user_id"] % 2 == 0:
-        #     output_data = output_data["selections"][0]
-        # else:
-        #     output_data = output_data["selections"][1]
-        
-        
-    
+            
         # validate the output data
         output_data = validate_coupon(output_data)
+        
+        print(f"Coupon with ID: {output_data['coupon_id']} has validated schema.")
         
         # return the output data
         return jsonify(output_data), 200
