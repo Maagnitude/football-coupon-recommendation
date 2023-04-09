@@ -138,8 +138,8 @@ def index():
 
 @app.route('/coupons')
 def get_coupons():
-    user = User.query.filter_by(user_id=1900271).first()
-    coupon = Coupon.query.filter_by(user_id=1900271).first()
+    user = User.query.filter_by(user_id=1900271).first()           # IT WORKS
+    coupon = Coupon.query.filter_by(user_id=user.user_id).first()  # IT WORKS
     
     return render_template('coupons.html', user=user, coupon=coupon)
 
