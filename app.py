@@ -1,87 +1,17 @@
 from flask import Flask, render_template, request, jsonify 
-import jsonschema
+from validators import validate_user, validate_event, validate_coupon
 
 app = Flask(__name__)
-
-def validate_user(data):
-    
-    schema = {
-        "type": "object",
-        "properties": {
-            "birth_year": {"type": "integer"},
-            "country": {"type": "string"},
-            "currency": {"type": "string"},
-            "gender": {"type": "string", "enum":["Male", "Female", "male", "female", "other"]},
-            "registration_date": {"type": "string"},
-            "user_id": {"type": "integer"}
-        },
-        "required": ["birth_year", "country", "currency", "gender", "registration_date", "user_id"]
-    }
-    jsonschema.validate(data, schema)
-    return data
-
-
-def validate_coupon(data):
-    
-    schema = {
-        "type": "object",
-        "properties": {
-            "coupon_id": {"type": "string"},
-            "selections": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "event_id": {"type": "string"},
-                        "odds": {"type": "number"}}
-                    }
-                },
-            "stake": {"type": "number"},
-            "timestamp": {"type": "string"},
-            "user_id": {"type": "integer"}
-        }
-    }
-    jsonschema.validate(data, schema)
-    return data
-
-
-def validate_event(data):
-    
-    schema = {
-        "type": "object",
-        "properties": {
-            "event": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "begin_timestamp": {"type": "string"},
-                        "country": {"type": "string"},
-                        "end_timestamp": {"type": "string"},
-                        "event_id": {"type": "string"},
-                        "league": {"type": "string"},
-                        "participants": {"type": "array", "items": {"type": "string"}},
-                        "sport": {"type": "string"}
-                    },
-                    "required": ["begin_timestamp", "country", "end_timestamp", "event_id", "league", "participants", "sport"]
-                }
-            }
-        }
-    }
-    jsonschema.validate(data, schema)
-    return data
-    
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/coupons', methods=['POST'])
 def get_coupons():
-    
     try:
-        user_data = validate_user(request.json)
-        
+        user_data = validate_user(request.json) 
         print(f"User with ID: {user_data['user_id']} has validated schema.")
         
         events = [
@@ -111,10 +41,8 @@ def get_coupons():
             }
         ]
         
-        event = {"event": events}
-        
-        event = validate_event(event)
-        
+        event = {"event": events}  
+        event = validate_event(event) 
         print(f"Event with ID: {event['event'][0]['event_id']} has validated schema.")
         
         coupon = [
@@ -139,22 +67,15 @@ def get_coupons():
             "stake": 40.8,
             "timestamp": "2020-01-01T01:05:01",
             "user_id": user_data["user_id"]
-            }
-            
-        # validate the output data
-        output_data = validate_coupon(output_data)
-        
-        print(f"Coupon with ID: {output_data['coupon_id']} has validated schema.")
-        
-        # return the output data
+            }        
+        output_data = validate_coupon(output_data)    
+        print(f"Coupon with ID: {output_data['coupon_id']} has validated schema.") 
         return jsonify(output_data), 200
     
     except Exception as e:
-        # return an error response if any exception occurs
         error_message = str(e)
         return jsonify({"error": error_message}), 400
         
-    
-    
+     
 if __name__ == '__main__':
     app.run(debug=True)
