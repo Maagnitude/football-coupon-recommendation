@@ -37,9 +37,10 @@ class Coupon(db.Model):
     timestamp = db.Column(db.String(30))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))         # Connecting the keys (users)
     
-    events = db.relationship('Event', backref='coupon', lazy='dynamic')     # ONE TO MANY, one coupon has many events 
+    events = db.relationship('Event', backref='coupon')                     # ONE TO MANY, one coupon has many events 
     
-    def __init__(self, event_id, odds, stake, timestamp, user_id):
+    def __init__(self, coupon_id, event_id, odds, stake, timestamp, user_id):
+        self.coupon_id = coupon_id
         self.event_id = event_id
         self.odds = odds
         self.stake = stake
@@ -66,9 +67,9 @@ class User(db.Model):
     country = db.Column(db.String(3))
     currency = db.Column(db.String(3))
     gender = db.Column(db.String(6))
-    registration_date = db.Column(db.Date)
+    registration_date = db.Column(db.String())
     
-    coupon = db.relationship('Coupon', backref='user', lazy='dynamic')  # ONE TO ONE - user to coupon (to test it)
+    coupon = db.relationship('Coupon', backref='user')  # ONE TO ONE - user to coupon (to test it)
     
     def __init__(self, user_id, birth_year, country, currency, gender, registration_date):
         self.user_id = user_id
@@ -98,10 +99,11 @@ class Event(db.Model):
     end_timestamp = db.Column(db.String(50))
     event_id = db.Column(db.String(50), primary_key=True)
     league = db.Column(db.String(20))
-    participants = db.Column(db.String())
+    participants = db.Column(db.String(20))
     sport = db.Column(db.String(20))
     
-    def __init__(self, begin_timestamp, country, end_timestamp, league, participants, sport):
+    def __init__(self, event_id, begin_timestamp, country, end_timestamp, league, participants, sport):
+        self.event_id = event_id
         self.begin_timestamp = begin_timestamp
         self.country = country
         self.end_timestamp = end_timestamp
@@ -116,11 +118,12 @@ class Event(db.Model):
             'end_timestamp': self.end_timestamp,
             'event_id': self.event_id,
             'league': self.league,
-            'participants': eval(self.participants)     # To convert string back to list
+            'participants': self.participants     # To convert string back to list
         }
     
 ##########################################################################################    
-    
+
+# APIs
 # api.add_resource(Coupon, '/coupons')
 # api.add_resource(User, '/users')
 # api.add_resource(Event, '/events')
@@ -131,6 +134,14 @@ class Event(db.Model):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/coupons')
+def get_coupons():
+    user = User.query.filter_by(user_id=1900271).first()
+    coupon = Coupon.query.filter_by(user_id=1900271).first()
+    
+    return render_template('coupons.html', user=user, coupon=coupon)
 
 
 @app.route('/coupon', methods=['POST'])
@@ -154,44 +165,49 @@ def get_coupon():
                 "begin_timestamp": "2020-02-08 18:00:00+00",
                 "country": "Czech Republic",
                 "end_timestamp": "2099-01-01 00:00:00+00",
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cf",
+                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4ca",
                 "league": "Extraliga",
-                "participants": [
-                    "HC Zubri",
-                    "HBC Ronal Jicin"
-                ],
+                "participants": "Milan",
                 "sport": "handball"
             },
             {
                 "begin_timestamp": "2020-02-10 19:00:00+00",
                 "country": "Spain",
                 "end_timestamp": "2099-01-01 00:00:00+00",
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4ce",
+                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cb",
                 "league": "LaLiga",
-                "participants": [
-                    "FC Barcelona",
-                    "Sevilla FC"
-                ],
+                "participants": "Barcelona",
                 "sport": "football"
             }
         ]
         
         event = {"event": events}  
         event = validate_event(event) 
+        
+        new_event = Event(begin_timestamp=event['event'][0]['begin_timestamp'],
+                          country=event['event'][0]['country'],
+                          end_timestamp=event['event'][0]['end_timestamp'],
+                          event_id=event['event'][0]['event_id'],
+                          league=event['event'][0]['league'],
+                          participants=event['event'][0]['participants'],
+                          sport=event['event'][0]['sport'])
+        db.session.add(new_event)
+        db.session.commit()
+        
         print(f"Event with ID: {event['event'][0]['event_id']} has validated schema.")
         
         coupon = [
             {
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4ce",
+                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4ca",
                 "odds": 3.97
             },
             {
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cf",
+                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cb",
                 "odds": 2.9
             }
             ]
         
-        coupon = random.sample(coupon, 1)   # Gives a random coupon
+        # coupon = random.sample(coupon, 1)   # Gives a random coupon
         
         # if user_data['user_id'] % 2 == 0: # Gives a coupon according to user's id (even or odd)
         #     coupon = [coupon[0]]
@@ -199,7 +215,7 @@ def get_coupon():
         #     coupon = [coupon[1]]
         
         output_data = {
-            "coupon_id": "8bcc0f90-96e9-4f87-aeab-22aff8c278ae",
+            "coupon_id": "8bcc0f90-96e9-4f87-aeab-22aff8c278aa",
             "selections": coupon,
             "stake": 40.8,
             "timestamp": "2020-01-01T01:05:01",
@@ -207,6 +223,15 @@ def get_coupon():
             }        
         output_data = validate_coupon(output_data)    
         print(f"Coupon with ID: {output_data['coupon_id']} has validated schema.") 
+        
+        new_coupon = Coupon(coupon_id=output_data['coupon_id'],
+                            event_id=output_data['selections'][0]['event_id'],
+                            odds=output_data['selections'][0]['odds'],
+                            stake=output_data['stake'],
+                            timestamp=output_data['timestamp'],
+                            user_id=user_data['user_id'])
+        db.session.add(new_coupon)
+        db.session.commit()
 
         return jsonify(output_data), 200
     

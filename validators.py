@@ -52,7 +52,7 @@ def validate_event(data):
                         "end_timestamp": {"type": "string"},
                         "event_id": {"type": "string"},
                         "league": {"type": "string"},
-                        "participants": {"type": "array", "items": {"type": "string"}},
+                        "participants": {"type": "string"},
                         "sport": {"type": "string"}
                     },
                     "required": ["begin_timestamp", "country", "end_timestamp", "event_id", "league", "participants", "sport"]
