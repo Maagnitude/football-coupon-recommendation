@@ -1,8 +1,8 @@
-"""created models
+"""changed directories for blueprints
 
-Revision ID: 735e91878a1a
+Revision ID: 6470981e8323
 Revises: 
-Create Date: 2023-04-09 22:15:46.705449
+Create Date: 2023-04-11 19:19:50.291794
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '735e91878a1a'
+revision = '6470981e8323'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,7 @@ def upgrade():
     sa.Column('end_timestamp', sa.String(length=50), nullable=True),
     sa.Column('event_id', sa.String(length=50), nullable=False),
     sa.Column('league', sa.String(length=20), nullable=True),
-    sa.Column('participants', sa.String(), nullable=True),
+    sa.Column('participants', sa.String(length=20), nullable=True),
     sa.Column('sport', sa.String(length=20), nullable=True),
     sa.PrimaryKeyConstraint('event_id')
     )
