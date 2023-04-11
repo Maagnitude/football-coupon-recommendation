@@ -1,8 +1,8 @@
 from recommendationapp import db
 
-##########################################################################################
-###################################### MODELS ############################################
-##########################################################################################
+##################################################
+##################### MODELS #####################
+##################################################
 class Coupon(db.Model):
     
     __tablename__ = 'coupons'
@@ -33,6 +33,9 @@ class Coupon(db.Model):
             'timestamp': self.timestamp,
             'user_id': self.user_id
         }
+        
+    def __repr__(self):
+        return f"Coupon with ID: {self.coupon_id}, has a stake of {self.stake}."
     
     
 class User(db.Model):
@@ -65,6 +68,9 @@ class User(db.Model):
             'gender': self.gender,
             'registration_date': self.registration_date
         }
+        
+    def __repr__(self):
+        return f"User with ID: {self.user_id} is from {self.country} and registered on {self.registration_date}."
     
     
 class Event(db.Model):
@@ -97,3 +103,6 @@ class Event(db.Model):
             'league': self.league,
             'participants': self.participants     # To convert string back to list
         }
+        
+    def __repr__(self):
+        return f"Event with ID: {self.event_id} is placed in {self.country} and begins at {self.begin_timestamp}."

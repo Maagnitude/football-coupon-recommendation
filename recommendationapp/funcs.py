@@ -2,8 +2,6 @@ from flask import request, jsonify
 from recommendationapp import db
 from recommendationapp.models import User, Event, Coupon
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
-   
-##########################################################################################
 
 def get_event():
     user = User.query.filter_by(user_id=1900273).first()
