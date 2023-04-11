@@ -7,8 +7,8 @@ coupons = Blueprint('coupons', __name__)
 def get_coupon():
     
     if request.method == 'GET':
-        user, coupon = get_a_coupon()
-        return render_template('coupons.html', user=user, coupon=coupon)
+        user, coupon, events = get_a_coupon()
+        return render_template('coupons.html', user=user, coupon=coupon, events=events)
     else: 
         coupon, code = create_coupon()
         return coupon, code

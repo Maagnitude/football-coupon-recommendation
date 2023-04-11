@@ -4,15 +4,16 @@ from recommendationapp.models import User, Event, Coupon
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
 
 def get_event():
-    user = User.query.filter_by(user_id=1900273).first()
+    user = User.query.filter_by(user_id=1).first()
     events = Event.query.all()
     print(events)
     return user, events
 
 def get_a_coupon():
-    user = User.query.filter_by(user_id=1900273).first()           # IT WORKS
+    user = User.query.filter_by(user_id=1).first()           # IT WORKS
     coupon = Coupon.query.filter_by(user_id=user.user_id).first()  # IT WORKS
-    return user, coupon
+    events = Event.query.filter_by(event_id=coupon.event_id).all()
+    return user, coupon, events
 
 def create_coupon():
     
@@ -32,21 +33,21 @@ def create_coupon():
         
         events = [
             {
-                "begin_timestamp": "2020-02-08 18:00:00+00",
-                "country": "Czech Republic",
+                "begin_timestamp": "2020-02-09 18:00:00+00",
+                "country": "England",
                 "end_timestamp": "2099-01-01 00:00:00+00",
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cv",
-                "league": "Extraliga",
-                "participants": "Milan",
-                "sport": "handball"
+                "event_id": "event3",
+                "league": "Premier League",
+                "participants": "Liverpool",
+                "sport": "football"
             },
             {
                 "begin_timestamp": "2020-02-10 19:00:00+00",
-                "country": "Spain",
+                "country": "Italy",
                 "end_timestamp": "2099-01-01 00:00:00+00",
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cw",
-                "league": "LaLiga",
-                "participants": "Barcelona",
+                "event_id": "event4",
+                "league": "Serie A",
+                "participants": "Milan",
                 "sport": "football"
             }
         ]
@@ -68,12 +69,12 @@ def create_coupon():
         
         coupon = [
             {
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cv",
-                "odds": 3.97
+                "event_id": "event3",
+                "odds": 3.34
             },
             {
-                "event_id": "2ff91a-09b3-41a2-a8c4-4a78ba85f4cw",
-                "odds": 2.9
+                "event_id": "event4",
+                "odds": 2.32
             }
             ]
         
@@ -85,10 +86,10 @@ def create_coupon():
         #     coupon = [coupon[1]]
         
         output_data = {
-            "coupon_id": "8bcc0f90-96e9-4f87-aeab-22aff8c278ai",
+            "coupon_id": "coupon2",
             "selections": coupon,
-            "stake": 40.8,
-            "timestamp": "2020-01-01T01:05:01",
+            "stake": 32.8,
+            "timestamp": "2020-01-09T01:05:01",
             "user_id": user_data["user_id"]
             }        
         output_data = validate_coupon(output_data)    

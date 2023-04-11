@@ -7,7 +7,9 @@
     <h4>{{ coupon }}</h4>
     <h4>Events in this coupon: </h4>
     <ol>
-        <li>{{ coupon['event_id'] }}</li>
+        {% for event in events %}
+        <li>{{ event }}</li>
+        {% endfor %}
     </ol>
 </div>
 

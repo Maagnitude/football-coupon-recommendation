@@ -1,8 +1,8 @@
-"""changed directories for blueprints
+"""initial migration
 
-Revision ID: 6470981e8323
+Revision ID: 9d62e9629ac4
 Revises: 
-Create Date: 2023-04-11 19:19:50.291794
+Create Date: 2023-04-11 20:28:18.471002
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6470981e8323'
+revision = '9d62e9629ac4'
 down_revision = None
 branch_labels = None
 depends_on = None
