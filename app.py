@@ -143,6 +143,12 @@ def get_coupons():
     
     return render_template('coupons.html', user=user, coupon=coupon)
 
+@app.route('/events')
+def get_events():
+    user = User.query.filter_by(user_id=1900271).first()
+    events = Event.query.all()
+    return render_template('events.html', user=user, events=events)
+
 
 @app.route('/coupon', methods=['POST'])
 def get_coupon():

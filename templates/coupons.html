@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
-    <h1>Hello user with id: {{ user['user_id'] }}</h1>
-    <h2>You have the coupon with id: {{ coupon['coupon_id'] }}</h2>
+    <h1 align="center">Coupon Page</h1><br><br>
+    <h2>Hello user with id: {{ user['user_id'] }}</h2>
+    <h3>Here's the coupon recommended for you!</h3>
+    <h4>Coupon ID: {{ coupon['coupon_id'] }}</h4>
+    <h4>Events in this coupon: </h4>
+    <ol>
+        <li>{{ coupon['event_id'] }}</li>
+    </ol>
 </div>
 
 {% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h1 align="center">Events Page</h1><br><br>
+    <h2>Hello user with id: {{ user['user_id'] }}</h2>
+    <h3>Current events</h3>
+    <ul>
+        {% for event in events %}
+        <li>{{event['participants']}} with event_id: '{{event['event_id']}}' that begins at {{event['begin_timestamp']}}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
