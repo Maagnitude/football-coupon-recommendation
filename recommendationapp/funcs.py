@@ -10,8 +10,8 @@ def get_event():
     return user, events
 
 def get_a_coupon():
-    user = User.query.filter_by(user_id=1).first()           # IT WORKS
-    coupon = Coupon.query.filter_by(user_id=user.user_id).first()  # IT WORKS
+    user = User.query.filter_by(user_id=1).first()           
+    coupon = Coupon.query.filter_by(user_id=user.user_id).first()  
     events = Event.query.filter_by(event_id=coupon.event_id).all()
     return user, coupon, events
 
