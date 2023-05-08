@@ -42,7 +42,23 @@ def find_user(wanted_user):
     except Exception as e:
         error_message = str(e)
         return jsonify("User not found!", "More details: ", error_message), 400
-        
+
+def find_all_users():
+    users = User.query.all()
+    users_list=[]
+    for i, user in enumerate(users):
+        user_dict = {
+                f"User no. {i+1}": {
+                    "user_id": user.user_id,
+                    "birth_year": user.birth_year,
+                    "country": user.country,
+                    "currency": user.currency,
+                    "gender": user.gender,
+                    "registration_date": user.registration_date
+                }
+            }
+        users_list.append(user_dict)
+    return jsonify("List of all the users: ", users_list), 200
 
 # EVENT FUNCTIONS
 def create_event(event):
@@ -65,12 +81,44 @@ def create_event(event):
             return f"Event creation failed! There is an event with the same ID! (event_id={event_data['event_id']})", 400
         return f"Event creation failed! More details: {error_message}", 400
 
-def get_event():
-    user = User.query.filter_by(user_id=1).first()
-    events = Event.query.all()
-    print(events)
-    return user, events
+def find_event(wanted_event):
+    try:
+        event = Event.query.filter_by(event_id=wanted_event['event_id']).first()
+        if event is not None: 
+            event_dict = {
+                "begin_timestamp": event.begin_timestamp,
+                "country": event.country,
+                "end_timestamp": event.end_timestamp,
+                "event_id": event.event_id,
+                "league": event.league,
+                "participants": event.participants,
+                "sport": event.sport
+            }
+            return jsonify("Event found!", event_dict), 200
+        else: 
+            return jsonify(f"Event with ID: {wanted_event['event_id']} doesn't exist!"), 400
+    except Exception as e:
+        error_message = str(e)
+        return jsonify("Event not found!", "More details: ", error_message), 400
 
+def find_all_events():
+    events = Event.query.all()
+    events_list=[]
+    for i, event in enumerate(events):
+        event_dict = {
+                f"Event no. {i+1}": {
+                    "begin_timestamp": event.begin_timestamp,
+                    "country": event.country,
+                    "end_timestamp": event.end_timestamp,
+                    "event_id": event.event_id,
+                    "league": event.league,
+                    "participants": event.participants,
+                    "sport": event.sport
+                }
+            }
+        events_list.append(event_dict)
+    return jsonify("List of all the events: ", events_list), 200
+        
 
 # COUPON FUNCTIONS
 def get_a_coupon():
@@ -80,7 +128,6 @@ def get_a_coupon():
     return user, coupon, events
 
 def create_coupon():
-    
     try:
         user_data = validate_user(request.json) 
         

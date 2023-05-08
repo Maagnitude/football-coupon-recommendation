@@ -1,14 +1,16 @@
 from flask import request, Blueprint
-from recommendationapp.funcs import create_user, find_user
+from recommendationapp.funcs import create_user, find_user, find_all_users
 
 users = Blueprint('users', __name__)
 
 @users.route('/register_user', methods=['POST'])
 def register_user():
-    registration_msg, code = create_user(request.json)
-    return registration_msg, code
+    return create_user(request.json)
     
 @users.route('/get_user')
 def get_user():
-    search_msg, code = find_user(request.json)
-    return search_msg, code
+    return find_user(request.json)
+
+@users.route('/get_all_users')
+def get_all_users():
+    return find_all_users()
