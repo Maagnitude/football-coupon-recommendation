@@ -1,7 +1,69 @@
 from flask import request, jsonify
+import json
 from recommendationapp import db
 from recommendationapp.models import User, Event, Coupon
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
+
+# USER FUNCTIONS
+def create_user(user):
+    try:
+        user_data = validate_user(user)
+        user = User(user_id=user_data['user_id'], 
+                    birth_year=user_data['birth_year'],
+                    country=user_data['country'],
+                    currency=user_data['currency'],
+                    gender=user_data['gender'],
+                    registration_date=user_data['registration_date'])
+        db.session.add(user)
+        db.session.commit()
+        print(f"User with ID: {user_data['user_id']} has been created.")
+        return jsonify("User created successfully", user_data), 200
+    except Exception as e:
+        error_message = str(e)
+        if error_message.__contains__("UNIQUE constraint failed"):
+            return f"User creation failed! There is a user with the same ID! (user_id={user_data['user_id']})", 400
+        return f"User creation failed! More details: {error_message}", 400
+
+def find_user(wanted_user):
+    try:
+        user = User.query.filter_by(user_id=wanted_user['user_id']).first()
+        if user is not None: 
+            user_dict = {
+                "user_id": user.user_id,
+                "birth_year": user.birth_year,
+                "country": user.country,
+                "currency": user.currency,
+                "gender": user.gender,
+                "registration_date": user.registration_date
+            }
+            return jsonify("User found!", user_dict), 200
+        else: 
+            return jsonify(f"User with ID: {wanted_user['user_id']} doesn't exist!"), 400
+    except Exception as e:
+        error_message = str(e)
+        return jsonify("User not found!", "More details: ", error_message), 400
+        
+
+# EVENT FUNCTIONS
+def create_event(event):
+    try:
+        event_data = validate_event(event)
+        event = Event(begin_timestamp=event_data['begin_timestamp'], 
+                    country=event_data['country'],
+                    end_timestamp=event_data['end_timestamp'],
+                    event_id=event_data['event_id'],
+                    league=event_data['league'],
+                    participants=event_data['participants'],
+                    sport = event_data['sport'])
+        db.session.add(event)
+        db.session.commit()
+        print(f"Event with ID: {event_data['event_id']} has been created.")
+        return jsonify("Event created successfully", event_data), 200
+    except Exception as e:
+        error_message = str(e)
+        if error_message.__contains__("UNIQUE constraint failed"):
+            return f"Event creation failed! There is an event with the same ID! (event_id={event_data['event_id']})", 400
+        return f"Event creation failed! More details: {error_message}", 400
 
 def get_event():
     user = User.query.filter_by(user_id=1).first()
@@ -9,6 +71,8 @@ def get_event():
     print(events)
     return user, events
 
+
+# COUPON FUNCTIONS
 def get_a_coupon():
     user = User.query.filter_by(user_id=1).first()           
     coupon = Coupon.query.filter_by(user_id=user.user_id).first()  

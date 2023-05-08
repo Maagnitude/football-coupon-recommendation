@@ -33,7 +33,9 @@ Migrate(app, db)
 from recommendationapp.core.views import core
 from recommendationapp.events.views import events
 from recommendationapp.coupons.views import coupons
+from recommendationapp.users.views import users
 
 app.register_blueprint(core)
 app.register_blueprint(events)
 app.register_blueprint(coupons)
+app.register_blueprint(users)

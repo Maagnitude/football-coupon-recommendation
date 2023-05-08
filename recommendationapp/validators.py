@@ -33,7 +33,8 @@ def validate_coupon(data):
             "stake": {"type": "number"},
             "timestamp": {"type": "string"},
             "user_id": {"type": "integer"}
-        }
+        },
+        "required": ["coupon_id", "selections", "stake", "timestamp"]
     }
     jsonschema.validate(data, schema)
     return data
