@@ -1,8 +1,9 @@
 FROM python:latest as BUILD
 
-COPY requirements.txt .
 COPY . .
 
 RUN pip install -r requirements.txt
+
+EXPOSE 5000
 
 CMD ["python", "app.py"]
