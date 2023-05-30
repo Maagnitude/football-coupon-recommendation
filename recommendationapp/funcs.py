@@ -1,11 +1,11 @@
 from flask import request, jsonify
-import json
 from recommendationapp import db
 from recommendationapp.models import User, Event, Coupon
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
+from typing import Tuple, Union
 
 # USER FUNCTIONS
-def create_user(user):
+def create_user(user: dict)-> Tuple[str, Union[dict, User]]:
     try:
         user_data = validate_user(user)
         user = User(user_id=user_data['user_id'], 
@@ -24,7 +24,7 @@ def create_user(user):
             return f"User creation failed! There is a user with the same ID! (user_id={user_data['user_id']})", 400
         return f"User creation failed! More details: {error_message}", 400
 
-def find_user(wanted_user):
+def find_user(wanted_user: dict)-> Tuple[str, Union[dict, User]]:
     try:
         user = User.query.filter_by(user_id=wanted_user['user_id']).first()
         if user is not None: 
@@ -43,7 +43,7 @@ def find_user(wanted_user):
         error_message = str(e)
         return jsonify("User not found!", "More details: ", error_message), 400
 
-def find_all_users():
+def find_all_users()-> Tuple[str, Union[dict, User]]:
     users = User.query.all()
     users_list=[]
     for i, user in enumerate(users):
@@ -61,7 +61,7 @@ def find_all_users():
     return jsonify("List of all the users: ", users_list), 200
 
 # EVENT FUNCTIONS
-def create_event(event):
+def create_event(event: dict)-> Tuple[str, Union[dict, Event]]:
     try:
         event_data = validate_event(event)
         event = Event(begin_timestamp=event_data['begin_timestamp'], 
@@ -81,7 +81,7 @@ def create_event(event):
             return f"Event creation failed! There is an event with the same ID! (event_id={event_data['event_id']})", 400
         return f"Event creation failed! More details: {error_message}", 400
 
-def find_event(wanted_event):
+def find_event(wanted_event: dict)-> Tuple[str, Union[dict, Event]]:
     try:
         event = Event.query.filter_by(event_id=wanted_event['event_id']).first()
         if event is not None: 
@@ -101,7 +101,7 @@ def find_event(wanted_event):
         error_message = str(e)
         return jsonify("Event not found!", "More details: ", error_message), 400
 
-def find_all_events():
+def find_all_events()-> Tuple[str, Union[dict, Event]]:
     events = Event.query.all()
     events_list=[]
     for i, event in enumerate(events):
