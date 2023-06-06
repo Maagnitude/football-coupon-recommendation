@@ -2,26 +2,35 @@ from flask import request, jsonify
 from recommendationapp import db
 from recommendationapp.models import User, Event, Coupon
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
-from typing import Tuple, Union
+from typing import Tuple, Union, List
+from sqlalchemy.orm import Session
 
 # USER FUNCTIONS
-def create_user(user: dict)-> Tuple[str, Union[dict, User]]:
+def create_user(users: List[dict], db_session: Session) -> Tuple[str, Union[dict, List[User]]]:
     try:
-        user_data = validate_user(user)
-        user = User(user_id=user_data['user_id'], 
-                    birth_year=user_data['birth_year'],
-                    country=user_data['country'],
-                    currency=user_data['currency'],
-                    gender=user_data['gender'],
-                    registration_date=user_data['registration_date'])
-        db.session.add(user)
-        db.session.commit()
-        print(f"User with ID: {user_data['user_id']} has been created.")
-        return jsonify("User created successfully", user_data), 200
+        user_objects = []
+        for user in users:
+            user_data = validate_user(user)
+            user_obj = User(
+                user_id=user_data['user_id'],
+                birth_year=user_data['birth_year'],
+                country=user_data['country'],
+                currency=user_data['currency'],
+                gender=user_data['gender'],
+                registration_date=user_data['registration_date']
+            )
+            user_objects.append(user_obj)
+        db_session.add_all(user_objects)
+        db_session.commit()
+
+        user_ids = [str(user_data['user_id']) for user_data in users]
+        print(f"Users with IDs: {', '.join(user_ids)} have been created.")
+        
+        user_objects.append("Users created successfully")
+
+        return user_objects, 200
     except Exception as e:
         error_message = str(e)
-        if error_message.__contains__("UNIQUE constraint failed"):
-            return f"User creation failed! There is a user with the same ID! (user_id={user_data['user_id']})", 400
         return f"User creation failed! More details: {error_message}", 400
 
 def find_user(wanted_user: dict)-> Tuple[str, Union[dict, User]]:
@@ -61,20 +70,29 @@ def find_all_users()-> Tuple[str, Union[dict, User]]:
     return jsonify("List of all the users: ", users_list), 200
 
 # EVENT FUNCTIONS
-def create_event(event: dict)-> Tuple[str, Union[dict, Event]]:
+def create_event(events: List[dict], db_session: Session)-> Tuple[str, Union[dict, List[Event]]]:
     try:
-        event_data = validate_event(event)
-        event = Event(begin_timestamp=event_data['begin_timestamp'], 
-                    country=event_data['country'],
-                    end_timestamp=event_data['end_timestamp'],
-                    event_id=event_data['event_id'],
-                    league=event_data['league'],
-                    participants=event_data['participants'],
-                    sport = event_data['sport'])
-        db.session.add(event)
+        event_objects = []
+        for event in events:
+            event_data = validate_event(event)
+            event_obj = Event(
+                begin_timestamp=event_data['begin_timestamp'], 
+                country=event_data['country'],
+                end_timestamp=event_data['end_timestamp'],
+                event_id=event_data['event_id'],
+                league=event_data['league'],
+                participants=event_data['participants'],
+                sport = event_data['sport']
+            )
+            event_objects.append(event_obj)
+        db.session.add_all(event_objects)
         db.session.commit()
-        print(f"Event with ID: {event_data['event_id']} has been created.")
-        return jsonify("Event created successfully", event_data), 200
+        
+        event_ids = [str(event_data['user_id']) for event_data in events]
+        print(f"Events with IDs: {', '.join(event_ids)} have been created.")
+        
+        event_objects.append("Users created successfully")
+        return event_objects, 200
     except Exception as e:
         error_message = str(e)
         if error_message.__contains__("UNIQUE constraint failed"):
