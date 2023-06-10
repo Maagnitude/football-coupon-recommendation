@@ -1,4 +1,4 @@
-FROM python:latest as BUILD
+FROM python:latest
 
 COPY . .
 
