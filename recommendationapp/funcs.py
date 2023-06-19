@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from recommendationapp import db
-from recommendationapp.models import User, Event, Coupon
+from recommendationapp.models import User, Event, Coupon, Odd
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
 from typing import Tuple, Union, List
 from sqlalchemy.orm import Session
@@ -26,13 +26,14 @@ def create_user(users: List[dict], db_session: Session) -> Tuple[str, Union[dict
 
         user_ids = [str(user_data['user_id']) for user_data in users]
         print(f"Users with IDs: {', '.join(user_ids)} have been created.")
-        
         user_objects.append("Users created successfully")
-
         return user_objects, 200
     except Exception as e:
         error_message = str(e)
+        if error_message.__contains__("UNIQUE constraint failed"):
+            return f"User creation failed! There is a user with the same ID! (user_id={user_data['user_id']})", 400
         return f"User creation failed! More details: {error_message}", 400
+
 
 def find_user(wanted_user: dict)-> Tuple[str, Union[dict, User]]:
     try:
@@ -89,10 +90,9 @@ def create_event(events: List[dict], db_session: Session)-> Tuple[str, Union[dic
         db.session.add_all(event_objects)
         db.session.commit()
         
-        event_ids = [str(event_data['user_id']) for event_data in events]
-        print(f"Events with IDs: {', '.join(event_ids)} have been created.")
-        
-        event_objects.append("Users created successfully")
+        event_matches = [str(f'{event_data["home"]} vs {event_data["away"]}') for event_data in events]
+        # print(f"Events: {', '.join(event_matches)} have been created.")
+        event_objects.append("Events created successfully")
         return event_objects, 200
     except Exception as e:
         print(e)
@@ -140,17 +140,58 @@ def find_all_events()-> Tuple[str, Union[dict, Event]]:
     odds = Event.query.order_by(desc(Event.event_id)).all()[:5] # 5: number_of_matches, desc: descending order
     print(len(odds))  
     return jsonify("List of all the events: ", events_list), 200
+
+# ODDS FUNCTIONS
+def create_odds(odds: List[dict], db_session: Session)-> Tuple[str, Union[dict, List[Odd]]]:
+    try:
+        odd_objects = []
+        for odd in odds:
+            odd_obj = Odd(
+                odd_id=odd['odd_id'], 
+                event_id=odd['event_id'],
+                odds = odd["odds"]
+            )
+            odd_objects.append(odd_obj)
+        db.session.add_all(odd_objects)
+        db.session.commit()
+        odd_ids = [str(odd_data['event_id']) for odd_data in odds]
+        # print(f"Odds with IDs: {', '.join(odd_ids)} have been created.")
+        odd_objects.append("Odds created successfully")
+        return odd_objects, 200
+    except Exception as e:
+        print(e)
+        error_message = str(e)
+        if error_message.__contains__("UNIQUE constraint failed"):
+            return f"Odd creation failed! There is an odd with the same ID! (odd_id={odd['odd_id']})", 400
+        return f"Odd creation failed! More details: {error_message}", 400
+    
+def find_all_odds()-> Tuple[str, Union[dict, Odd]]:
+    odds = Odd.query.all()
+    odds_list=[]
+    for i, odd in enumerate(odds):
+        odd_dict = {
+                f"Event no. {i+1}": {
+                    "odd_id": odd.odd_id,
+                    "event_id": odd.event_id,
+                    "odds": odd.odds
+                }
+            }
+        odds_list.append(odd_dict)
+    odds = Odd.query.order_by(desc(Odd.odd_id)).all()[:5] # 5: number_of_matches, desc: descending order
+    print(len(odds))  
+    return jsonify("List of all the odds: ", odds_list), 200
         
 
 # COUPON FUNCTIONS
 def get_a_coupon():
-    user = User.query.filter_by(user_id=1).first()           
-    coupon = Coupon.query.filter_by(user_id=user.user_id).first()  
-    events = Event.query.filter_by(event_id=coupon.event_id).all()
+    users = User.query.all()   
+    coupons = Coupon.query.all()
+    events = Event.query.all()
+    odds = Odd.query.all()
     # TODO : odds = Event.query.order_by(desc(Event.event_id)).all()[:5] # 5: number_of_matches, desc: descending order
     # TODO : odds = Event.query.order_by(Event.event_id).all()[:5] # 5: number_of_matches
     # TODO: random.choices(list, k=3) # 3: number_of_matches
-    return user, coupon, events
+    return users, coupons, events
 
 def create_coupon():
     try:

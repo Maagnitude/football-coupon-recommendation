@@ -9,7 +9,7 @@ def validate_user(data):
             "currency": {"type": "string"},
             "gender": {"type": "string", "enum":["Male", "Female", "male", "female", "other"]},
             "registration_date": {"type": "string"},
-            "user_id": {"type": "integer"}
+            "user_id": {"type": "string"}
         },
         "required": ["birth_year", "country", "currency", "gender", "registration_date", "user_id"]
     }
@@ -32,7 +32,7 @@ def validate_coupon(data):
                 },
             "stake": {"type": "number"},
             "timestamp": {"type": "string"},
-            "user_id": {"type": "integer"}
+            "user_id": {"type": "string"}
         },
         "required": ["coupon_id", "selections", "stake", "timestamp"]
     }

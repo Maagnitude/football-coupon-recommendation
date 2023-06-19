@@ -5,7 +5,9 @@ import random
 import datetime
 import uuid
 import requests
+import csv
 
+# LEAGUES FOR EVENTS
 def load_leagues(league_json_files):
     leagues = []
     
@@ -15,6 +17,7 @@ def load_leagues(league_json_files):
             leagues.append(league)
     return leagues
 
+# TEAMS FOR EVENTS
 def export_teams(leagues):
     data = []
     country_data = {'Bundesliga': 'Germany', 'Premier League': 'England'}
@@ -32,6 +35,7 @@ def export_teams(leagues):
         data.append({'league': cur_league, 'country': country_data[cur_league],'teams': teams})
     return data
 
+# EVENTS
 def generate_events(league):
     events = []
     matchdate = datetime.datetime.now() + datetime.timedelta(days=60)
@@ -73,28 +77,59 @@ def create_events(leagues):
 # 
 
 def import_events(events):
-    events = {'events': events}
-    requests.post('http://127.0.0.1:5000/register_event', json=json.dumps(events))
-        
-def create_odds(events):
+    requests.post('http://127.0.0.1:5000/register_event', json=events)
+
+# ODDS       
+def add_odds(events):
     odds = []
     for event in events:
-        odds.append({'event_id': event['event_id'],
+        odds.append({'odd_id': str(uuid.uuid4()),
+                     'event_id': event['event_id'],
                      'odds': random.uniform(1, 4)})
     return odds
 
 def import_odds(odds):
-    odds = {'odds': odds}
-    requests.post('http://127.0.0.1:5000/register_odds', json=json.dumps(odds))
+    requests.post('http://127.0.0.1:5000/register_odds', json=odds)
+    
+# USERS   
+def load_countries(countries_json):
+    countries = []
+    country_list = []
+    for country_json in countries_json:
+        with open(country_json) as json_file:
+            country = json.load(json_file)
+            countries.append(country)
+    for country in countries[0]["countries"]["country"]:
+        country_list.append({"code": country["countryCode"], "currency": country["currencyCode"]})
+    return country_list
+
+def create_users(country_list):
+    users = []
+   
+    for _ in range(100):
+        users.append({"user_id": str(uuid.uuid4()),
+                      "birth_year": random.randint(1950, 2004),
+                      "country": random.choice(country_list)["code"],
+                      "currency": random.choice(country_list)["currency"],
+                      "gender": random.choice(["Male", "Female"]),
+                      "registration_date": str(datetime.datetime.now() - datetime.timedelta(days=random.randint(10, 365*2)))
+                      })
+    return users
+
+def import_users(users):
+    requests.post('http://127.0.0.1:5000/register_user', json=users)
 
 if __name__ == '__main__':
     working_directory = os.getcwd()
     leagues_json_files = glob(os.path.join(working_directory, 'recommendationapp/teams/data/*.json'))
+    countries_json = glob(os.path.join(working_directory, 'recommendationapp/teams/countries.json'))
     leagues = load_leagues(leagues_json_files)
     data = export_teams(leagues)
     all_events = create_events(data)
     import_events(all_events)
-    odds = create_odds(all_events)
-    print(odds)
-    #import_odds(odds) TODO: endpoint for odds
+    odds = add_odds(all_events)
+    import_odds(odds)
+    country_list = load_countries(countries_json)
+    users = create_users(country_list)
+    import_users(users)
     # TODO: GENERATE COUPONS

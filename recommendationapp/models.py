@@ -42,7 +42,7 @@ class User(db.Model):
     
     __tablename__ = 'users'
     
-    user_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(50), primary_key=True)
     birth_year = db.Column(db.Integer)
     country = db.Column(db.String(3))
     currency = db.Column(db.String(3))
@@ -101,8 +101,31 @@ class Event(db.Model):
             'end_timestamp': self.end_timestamp,
             'event_id': self.event_id,
             'league': self.league,
-            'participants': self.participants     # To convert string back to list
+            'participants': self.participants
         }
         
     def __repr__(self):
         return f"Event with ID: {self.event_id} is placed in {self.country} and begins at {self.begin_timestamp}."
+    
+class Odd(db.Model):
+    
+    __tablename__ = 'odds'
+    
+    odd_id = db.Column(db.String(50), primary_key=True)
+    event_id = db.Column(db.String(50))
+    odds = db.Column(db.String(10))
+    
+    def __init__(self, odd_id, event_id, odds):
+        self.odd_id = odd_id
+        self.event_id = event_id
+        self.odds = odds
+        
+    def json(self):
+        return {
+            'odd_id': self.odd_id,
+            'event_id': self.event_id,
+            'odds': self.odds
+        }
+        
+    def __repr__(self):
+        return f"Odds with ID: {self.odd_id} are {self.odds} and represent the event with event id {self.event_id}."
