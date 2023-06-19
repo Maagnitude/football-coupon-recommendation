@@ -11,7 +11,7 @@ class TestValidateUser(unittest.TestCase):
             "currency": "USD",
             "gender": "Male",
             "registration_date": "2022-01-01",
-            "user_id": 123
+            "user_id": "123"
         }
 
         # validate data
@@ -42,7 +42,7 @@ class TestValidateUser(unittest.TestCase):
             "currency": "USD",
             "gender": "invalid_gender",
             "registration_date": "2022-01-01",
-            "user_id": 123
+            "user_id": "123"
         }
 
         # validate data
@@ -61,7 +61,7 @@ class TestValidateCoupon(unittest.TestCase):
             ],
             "stake": 10.0,
             "timestamp": "2021-05-08T15:30:00Z",
-            "user_id": 1234
+            "user_id": "1234"
         }
         result = validate_coupon(coupon)
         self.assertEqual(result, coupon)
@@ -75,7 +75,7 @@ class TestValidateCoupon(unittest.TestCase):
             ],
             "stake": 10.0,
             "timestamp": "2021-05-08T15:30:00Z",
-            "user_id": 1234
+            "user_id": "1234"
         }
         with self.assertRaises(jsonschema.ValidationError):
             validate_coupon(coupon)
@@ -90,7 +90,7 @@ class TestValidateCoupon(unittest.TestCase):
             ],
             "stake": 10.0,
             "timestamp": "2021-05-08T15:30:00Z",
-            "user_id": "1234"
+            "user_id": 1234
         }
         with self.assertRaises(jsonschema.ValidationError):
             validate_coupon(coupon)

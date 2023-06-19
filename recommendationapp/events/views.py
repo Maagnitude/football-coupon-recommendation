@@ -1,8 +1,7 @@
 from flask import request, Blueprint
-from recommendationapp.funcs import create_event, find_event, find_all_events
+from recommendationapp.funcs import create_event, find_event, find_all_events, create_odds, find_all_odds
 from recommendationapp import db
 from sqlalchemy.orm import sessionmaker
-import json
 
 events = Blueprint('events', __name__)
 
@@ -10,11 +9,9 @@ events = Blueprint('events', __name__)
 def register_event():
     Session = sessionmaker(bind=db.engine)
     batch_session = Session()
-    json_data = json.loads(request.json)['events']
-    print(json_data)
+    json_data = request.get_json()
     result = create_event(json_data, batch_session)  
     batch_session.close()
-    
     return {"result": result[-1]}
 
 @events.route('/get_event')
@@ -24,3 +21,16 @@ def get_event():
 @events.route('/get_all_events')
 def get_all_events():
     return find_all_events()
+
+@events.route('/register_odds', methods=['POST'])
+def register_odds():
+    Session = sessionmaker(bind=db.engine)
+    batch_session = Session()
+    json_data = request.get_json()
+    result = create_odds(json_data, batch_session)  
+    batch_session.close()
+    return {"result": result[-1]}
+
+@events.route('/get_odds')
+def get_all_odds():
+    return find_all_odds()
