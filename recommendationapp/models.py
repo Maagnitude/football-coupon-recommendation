@@ -9,12 +9,10 @@ class Coupon(db.Model):
     __tablename__ = 'coupons'
     
     coupon_id = db.Column(db.String(50), primary_key=True)
-    selections = db.Column(JSON)   # Connecting the keys (events)
+    selections = db.Column(JSON)                                            # Connecting the keys (events)
     stake = db.Column(db.Float)
     timestamp = db.Column(db.String(30))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))         # Connecting the keys (users)
-    
-    # events = db.relationship('Event', backref='coupon')                     # ONE TO MANY, one coupon has many events 
     
     def __init__(self, coupon_id, selections, stake, timestamp, user_id):
         self.coupon_id = coupon_id
@@ -47,7 +45,7 @@ class User(db.Model):
     gender = db.Column(db.String(6))
     registration_date = db.Column(db.String())
     
-    coupon = db.relationship('Coupon', backref='user')  # ONE TO ONE - user to coupon (to test it)
+    coupon = db.relationship('Coupon', backref='user')
     
     def __init__(self, user_id, birth_year, country, currency, gender, registration_date):
         self.user_id = user_id

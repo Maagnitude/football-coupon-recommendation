@@ -10,7 +10,6 @@ def register_user():
     Session = sessionmaker(bind=db.engine)
     batch_session = Session()
     json = request.get_json()
-    print(json)
     result = create_user(json, batch_session)  
     batch_session.close()
     return {"result": result[-1]}

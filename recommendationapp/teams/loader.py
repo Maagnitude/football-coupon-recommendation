@@ -5,7 +5,6 @@ import random
 import datetime
 import uuid
 import requests
-import csv
 
 # LEAGUES FOR EVENTS
 def load_leagues(league_json_files):
@@ -117,4 +116,3 @@ if __name__ == '__main__':
     country_list = load_countries(countries_json)
     users = create_users(country_list)
     import_users(users)
-    # TODO: GENERATE COUPONS

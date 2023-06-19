@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import jsonify
 from recommendationapp import db
 from recommendationapp.models import User, Event, Coupon, Odd
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
@@ -26,7 +26,6 @@ def create_user(users: List[dict], db_session: Session) -> Tuple[str, Union[dict
             user_objects.append(user_obj)
         db_session.add_all(user_objects)
         db_session.commit()
-
         user_ids = [str(user_data['user_id']) for user_data in users]
         print(f"Users with IDs: {', '.join(user_ids)} have been created.")
         user_objects.append("Users created successfully")
@@ -140,8 +139,6 @@ def find_all_events()-> Tuple[str, Union[dict, Event]]:
                 }
             }
         events_list.append(event_dict)
-    odds = Event.query.order_by(desc(Event.event_id)).all()[:5] # 5: number_of_matches, desc: descending order
-    print(len(odds))  
     return jsonify("List of all the events: ", events_list), 200
 
 # ODDS FUNCTIONS
@@ -179,24 +176,14 @@ def find_all_odds()-> Tuple[str, Union[dict, Odd]]:
                     "odds": odd.odds
                 }
             }
-        odds_list.append(odd_dict)
-    odds = Odd.query.order_by(desc(Odd.odd_id)).all()[:5] # 5: number_of_matches, desc: descending order
-    print(len(odds))  
-    return jsonify("List of all the odds: ", odds_list), 200
-        
+        odds_list.append(odd_dict) 
+    return jsonify("List of all the odds: ", odds_list), 200    
 
 # COUPON FUNCTIONS
 def get_a_coupon():
-    users = User.query.all()   
-    coupons = Coupon.query.all()
-    events = Event.query.all()
-    odds = Odd.query.all()
-    # TODO : odds = Event.query.order_by(desc(Event.event_id)).all()[:5] # 5: number_of_matches, desc: descending order
-    # TODO : odds = Event.query.order_by(Event.event_id).all()[:5] # 5: number_of_matches
-    # TODO: random.choices(list, k=3) # 3: number_of_matches
-    return users, coupons, events
+    pass
 
-# COUPON FUNCTION
+# COUPON MEGA FUNCTION
 def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
     try:
         odds = Odd.query.all()
@@ -248,7 +235,7 @@ def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict,
         
         db.session.add(new_coupon)
         db.session.commit()
-        return new_coupon, 200
+        return coupons, 200
     except Exception as e:
         error_message = str(e)
         return error_message, 400
