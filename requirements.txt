@@ -4,3 +4,4 @@ Flask_Migrate==4.0.4
 flask_sqlalchemy==3.0.3
 jsonschema==4.17.3
 SQLAlchemy==2.0.7
+requests==2.31.0
