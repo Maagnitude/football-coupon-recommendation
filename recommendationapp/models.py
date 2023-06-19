@@ -1,4 +1,5 @@
 from recommendationapp import db
+from sqlalchemy.dialects.sqlite import JSON
 
 ##################################################
 ##################### MODELS #####################
@@ -8,18 +9,16 @@ class Coupon(db.Model):
     __tablename__ = 'coupons'
     
     coupon_id = db.Column(db.String(50), primary_key=True)
-    event_id = db.Column(db.String(50), db.ForeignKey('events.event_id'))   # Connecting the keys (events)
-    odds = db.Column(db.Float)
+    selections = db.Column(JSON)   # Connecting the keys (events)
     stake = db.Column(db.Float)
     timestamp = db.Column(db.String(30))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))         # Connecting the keys (users)
     
-    events = db.relationship('Event', backref='coupon')                     # ONE TO MANY, one coupon has many events 
+    # events = db.relationship('Event', backref='coupon')                     # ONE TO MANY, one coupon has many events 
     
-    def __init__(self, coupon_id, event_id, odds, stake, timestamp, user_id):
+    def __init__(self, coupon_id, selections, stake, timestamp, user_id):
         self.coupon_id = coupon_id
-        self.event_id = event_id
-        self.odds = odds
+        self.selections = selections
         self.stake = stake
         self.timestamp = timestamp
         self.user_id = user_id
@@ -27,8 +26,7 @@ class Coupon(db.Model):
     def json(self):
         return {
             'coupon_id': self.coupon_id,
-            'event_id': self.event_id,
-            'odds': self.odds,
+            'selections': self.selections,
             'stake': self.stake,
             'timestamp': self.timestamp,
             'user_id': self.user_id

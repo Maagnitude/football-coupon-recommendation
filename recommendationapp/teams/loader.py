@@ -10,7 +10,6 @@ import csv
 # LEAGUES FOR EVENTS
 def load_leagues(league_json_files):
     leagues = []
-    
     for league_json_file in league_json_files:
         with open(league_json_file) as json_file:
             league = json.load(json_file)
@@ -20,7 +19,7 @@ def load_leagues(league_json_files):
 # TEAMS FOR EVENTS
 def export_teams(leagues):
     data = []
-    country_data = {'Bundesliga': 'Germany', 'Premier League': 'England'}
+    country_data = {'Bundesliga': 'Germany', 'Premier League': 'England', 'Primera Division': 'Spain', 'Serie A': 'Italy', 'Ligue 1': 'France'}
     for league in leagues:
         cur_league = league['name'].replace('2020/21', '').strip()
         teams = []
@@ -38,7 +37,7 @@ def export_teams(leagues):
 # EVENTS
 def generate_events(league):
     events = []
-    matchdate = datetime.datetime.now() + datetime.timedelta(days=60)
+    matchdate = datetime.datetime.now() + datetime.timedelta(days=10)
     allteams = league['teams']
     while (len(allteams) > 0):
         team1 = random.choice(allteams)
@@ -62,20 +61,6 @@ def create_events(leagues):
         events += generate_events(league)
     return events
 
-# def create_coupons(events):
-#     coupons = []
-#     for i in range(10):
-#         coupon = []
-#         for j in range(5):
-#             coupon.append(random.choice(events))
-#         coupons.append(coupon)
-#     return coupons
-
-# endpoint POST, θα δεχετε χρηστη και stake, θα επιστρεφει το coupon με τα αντιστοιχα odds
-# INPUT: mode- high, low, random | stake | user | number of matches
-#              high: θα επιλεγει τα ακριβοτερα odds
-# 
-
 def import_events(events):
     requests.post('http://127.0.0.1:5000/register_event', json=events)
 
@@ -85,7 +70,7 @@ def add_odds(events):
     for event in events:
         odds.append({'odd_id': str(uuid.uuid4()),
                      'event_id': event['event_id'],
-                     'odds': random.uniform(1, 4)})
+                     'odds': int(random.uniform(1, 5) * 100) / 100})
     return odds
 
 def import_odds(odds):
