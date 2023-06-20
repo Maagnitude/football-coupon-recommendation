@@ -26,15 +26,12 @@ def get_all_events():
     json_response = jsonify(events)
     if events is None:
         return {"result": "No events found"}
-    # Render HTML template by default
     return render_template('events.html', events=events, odds=odds, json_response=json_response)
 
 @events.route('/api/get_all_events')
 def api_get_all_events():
     events = find_all_events()[0]
     json_response = jsonify(events)
-
-    # Render HTML template by default
     return json_response
 
 @events.route('/register_odds', methods=['POST'])

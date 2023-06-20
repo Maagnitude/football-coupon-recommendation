@@ -2,13 +2,13 @@
 {% block content %}
 <div class="jumbotron">
     <h1 align="center">Coupon Page</h1><br><br>
-    <h2>You want your personalized coupon? That's easy for us!</h2>
-    <h3>Just pick the number of matches, and the recommendation mode!</h3>
-    <form method="POST">
+    <h2 align="center">You want your personalized coupon? That's easy for us!</h2>
+    <h2 align="center">All you have to do is enter your id, number of matches you want, the stake and the mode!</h2>
+    <form align= "center" method="POST">
         {{form.hidden_tag()}}<br>
-        {{form.user_id.label}}<br>{{form.user_id()}}<br>
-        {{form.matches.label}}<br>{{form.matches()}}<br>
-        {{form.stake.label}}<br>{{form.stake()}}<br>
+        {{form.user_id.label}}<br>{{form.user_id()}}<br><br>
+        {{form.matches.label}}<br>{{form.matches()}}<br><br>
+        {{form.stake.label}}<br>${{form.stake()}}<br><br>
         {{form.mode.label}}<br>{{form.mode()}}<br><br>
         {{form.submit()}}<br><br>
     </form>
