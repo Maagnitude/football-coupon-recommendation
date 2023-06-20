@@ -183,6 +183,8 @@ def get_a_coupon():
 def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
     try:
         odds = Odd.query.all()
+        if odds is None:
+            return jsonify("There are no odds in the database!"), 400
         stake = user_info['stake']
         user_id = user_info['user_id']
         mode = user_info['mode']

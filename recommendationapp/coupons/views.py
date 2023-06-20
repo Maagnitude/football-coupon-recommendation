@@ -38,6 +38,8 @@ def get_coupon():
         batch_session = Session()
         
         coupon, code = create_coupon(user_info, batch_session)
+        if code == 400:
+            return redirect(url_for('core.index'))
         events = find_all_events()[0]
         
         batch_session.close()

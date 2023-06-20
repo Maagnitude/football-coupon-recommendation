@@ -24,8 +24,8 @@ def get_all_events():
     events = find_all_events()[0]
     odds = find_all_odds()[0]
     json_response = jsonify(events)
-    print(odds[0])
-
+    if events is None:
+        return {"result": "No events found"}
     # Render HTML template by default
     return render_template('events.html', events=events, odds=odds, json_response=json_response)
 
