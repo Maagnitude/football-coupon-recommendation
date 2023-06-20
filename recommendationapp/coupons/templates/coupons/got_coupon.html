@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h1 align="center">Coupon Page</h1><br><br>
+    <h2 align="center">Your coupon is ready!</h2>
+    <h3 align="center">Hope you get rich! Have fun!</h3>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+        }  
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td {
+            background-color: rgba(128, 222, 241, 0.2);
+        }
+        td.column1 {
+            text-align: right;
+        }
+        th.column1 {
+            text-align: right;
+        }
+    </style>
+    <table align="center">
+        <tr>
+            <th>Stake</th>
+            <th>Submit Date</th>
+            <th>Time</th>
+            <th>Total winnings</th>
+        </tr>
+        <tr>
+            <td>${{ coupon.stake }}</td>
+            <td>{{ coupon.timestamp[:10] }}</td>
+            <td>{{ coupon.timestamp[11:-7] }}</td>
+            <td>${{ (coupon.selections | map(attribute='odd') | multiply) * coupon.stake | float | round(1) }}</td>
+        </tr>
+    </table>
+    <table align="center">
+        <tr>
+            <th>Events</th>
+            <th>Odds</th>
+        </tr>
+        {% for selection in coupon.selections %}
+        <tr>
+            <td>{{ selection.event | get_event_participants(events) }}</td>
+            <td>{{ selection.odd }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

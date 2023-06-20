@@ -4,7 +4,7 @@ from recommendationapp import db
 from sqlalchemy.orm import sessionmaker
 import json
 
-events = Blueprint('events', __name__)
+events = Blueprint('events', __name__, template_folder='templates/events')
 
 @events.route('/register_event', methods=['POST'])
 def register_event():
