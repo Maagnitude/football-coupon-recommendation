@@ -18,7 +18,8 @@ def load_leagues(league_json_files):
 # TEAMS FOR EVENTS
 def export_teams(leagues):
     data = []
-    country_data = {'Bundesliga': 'Germany', 'Premier League': 'England', 'Primera Division': 'Spain', 'Serie A': 'Italy', 'Ligue 1': 'France'}
+    country_data = {'Bundesliga': 'Germany', 'Premier League': 'England', 'Primera Division': 'Spain', 'Serie A': 'Italy', 'Ligue 1': 'France',
+                    'Super League': 'Greece', 'Eredivisie': 'Netherlands', 'First League': 'Hungary', 'Primeira Liga': 'Portugal', 'Premiership': 'Scotland'}
     for league in leagues:
         cur_league = league['name'].replace('2020/21', '').strip()
         teams = []
@@ -36,9 +37,11 @@ def export_teams(leagues):
 # EVENTS
 def generate_events(league):
     events = []
-    matchdate = datetime.datetime.now() + datetime.timedelta(days=10)
     allteams = league['teams']
     while (len(allteams) > 0):
+        delta_minutes = (random.choice([0, 15, 30, 45])//15)*15 # So the minutes will be 0, 15, 30 or 45
+        # Matchdate will always be 10 to 20 days from now, random hour and 15 minute interval, always 90 minutes long
+        matchdate = datetime.datetime.now() + datetime.timedelta(days=random.randint(10, 20), hours=random.randint(0,23), minutes=delta_minutes)
         team1 = random.choice(allteams)
         allteams.pop(allteams.index(team1))
         team2 = random.choice(allteams)
