@@ -18,5 +18,17 @@ def get_odds(event_id, odds):
     matching_odd = next((odd['odds'] for odd in odds if odd['event_id'] == event_id), None)
     return matching_odd
 
+@app.template_filter('get_event_participants')
+def get_event_participants(event_id, events):
+    matching_event = next((event['participants'] for event in events if event['event_id'] == event_id), None)
+    return matching_event
+
+@app.template_filter('multiply')
+def multiply(values):
+    result = 1
+    for value in values:
+        result *= float(value)
+    return result
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
