@@ -26,8 +26,8 @@ def create_user(users: List[dict], db_session: Session) -> Tuple[str, Union[dict
             user_objects.append(user_obj)
         db_session.add_all(user_objects)
         db_session.commit()
-        user_ids = [str(user_data['user_id']) for user_data in users]
-        print(f"Users with IDs: {', '.join(user_ids)} have been created.")
+        # user_ids = [str(user_data['user_id']) for user_data in users]
+        # print(f"Users with IDs: {', '.join(user_ids)} have been created.")
         user_objects.append("Users created successfully")
         return user_objects, 200
     except Exception as e:
@@ -128,7 +128,6 @@ def find_all_events()-> Tuple[str, Union[dict, Event]]:
     events_list=[]
     for i, event in enumerate(events):
         event_dict = {
-                f"Event no. {i+1}": {
                     "begin_timestamp": event.begin_timestamp,
                     "country": event.country,
                     "end_timestamp": event.end_timestamp,
@@ -136,10 +135,9 @@ def find_all_events()-> Tuple[str, Union[dict, Event]]:
                     "league": event.league,
                     "participants": event.participants,
                     "sport": event.sport
-                }
             }
         events_list.append(event_dict)
-    return jsonify("List of all the events: ", events_list), 200
+    return events_list, 200
 
 # ODDS FUNCTIONS
 def create_odds(odds: List[dict], db_session: Session)-> Tuple[str, Union[dict, List[Odd]]]:
@@ -170,14 +168,12 @@ def find_all_odds()-> Tuple[str, Union[dict, Odd]]:
     odds_list=[]
     for i, odd in enumerate(odds):
         odd_dict = {
-                f"Event no. {i+1}": {
                     "odd_id": odd.odd_id,
                     "event_id": odd.event_id,
                     "odds": odd.odds
                 }
-            }
         odds_list.append(odd_dict) 
-    return jsonify("List of all the odds: ", odds_list), 200    
+    return odds_list, 200    
 
 # COUPON FUNCTIONS
 def get_a_coupon():

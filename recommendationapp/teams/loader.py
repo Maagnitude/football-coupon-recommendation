@@ -41,7 +41,7 @@ def generate_events(league):
     while (len(allteams) > 0):
         delta_minutes = (random.choice([0, 15, 30, 45])//15)*15 # So the minutes will be 0, 15, 30 or 45
         # Matchdate will always be 10 to 20 days from now, random hour and 15 minute interval, always 90 minutes long
-        matchdate = datetime.datetime.now() + datetime.timedelta(days=random.randint(10, 20), hours=random.randint(0,23), minutes=delta_minutes)
+        matchdate = datetime.datetime.now().replace(minute=delta_minutes) + datetime.timedelta(days=random.randint(10, 20), hours=random.randint(0,23))
         team1 = random.choice(allteams)
         allteams.pop(allteams.index(team1))
         team2 = random.choice(allteams)
@@ -51,8 +51,8 @@ def generate_events(league):
                            'away': team2, 
                            'league': league['league'],
                            'country': league['country'], 
-                           'begin_timestamp': str(matchdate), 
-                           'end_timestamp': str(matchdate+datetime.timedelta(minutes=90)),
+                           'begin_timestamp': str(matchdate)[:-7], 
+                           'end_timestamp': str(matchdate+datetime.timedelta(minutes=90))[:-7],
                            'sport': 'football',
                            'event_id': str(uuid.uuid4())})
     return events
@@ -99,7 +99,7 @@ def create_users(country_list):
                       "country": random.choice(country_list)["code"],
                       "currency": random.choice(country_list)["currency"],
                       "gender": random.choice(["Male", "Female"]),
-                      "registration_date": str(datetime.datetime.now() - datetime.timedelta(days=random.randint(10, 365*2)))
+                      "registration_date": str(datetime.datetime.now() - datetime.timedelta(days=random.randint(10, 365*2)))[:-7]
                       })
     return users
 
