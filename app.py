@@ -1,6 +1,5 @@
 from recommendationapp import app
 import subprocess
-from jinja2 import Environment
 
 # Run the loader.py script
 @app.before_first_request
