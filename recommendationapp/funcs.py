@@ -182,6 +182,9 @@ def get_a_coupon():
 # COUPON MEGA FUNCTION
 def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
     try:
+        wanted_user = User.query.filter_by(user_id=user_info['user_id']).first()
+        if wanted_user is None:
+            return jsonify(f"User with ID: {user_info['user_id']} doesn't exist!"), 400
         odds = Odd.query.all()
         if odds is None:
             return jsonify("There are no odds in the database!"), 400
@@ -237,3 +240,20 @@ def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict,
     except Exception as e:
         error_message = str(e)
         return error_message, 400
+    
+def find_coupons(user_id):
+    wanted_user = User.query.filter_by(user_id=user_id).first()
+    if wanted_user is None:
+        return jsonify(f"User with ID: {user_id} doesn't exist!"), 400
+    coupons = Coupon.query.filter_by(user_id=user_id).all()
+    coupons_list=[]
+    for i, coupon in enumerate(coupons):
+        coupon_dict = {
+                    "coupon_id": coupon.coupon_id,
+                    "selections": coupon.selections,
+                    "stake": coupon.stake,
+                    "timestamp": coupon.timestamp,
+                    "user_id": coupon.user_id
+                }
+        coupons_list.append(coupon_dict) 
+    return coupons_list, 200

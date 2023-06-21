@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h1 align="center">Coupon Page</h1><br><br>
+    <h2 align="center">You want to check on your coupons?</h2>
+    <h2 align="center">Please enter your id, in order to find them!</h2>
+    <form align= "center" method="POST">
+        {{form.hidden_tag()}}<br>
+        {{form.user_id.label}}<br>{{form.user_id()}}<br><br>
+        {{form.submit()}}<br><br>
+    </form>
+    {% if code == 400 %}
+        <h3 align="center">User doesn't exist! Please enter the correct user_id!</h3>
+    {% endif %}
+</div>
+{% endblock %}

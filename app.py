@@ -3,9 +3,9 @@ import subprocess
 from jinja2 import Environment
 
 # Run the loader.py script
-# @app.before_first_request
-# def run_loader():
-#     subprocess.Popen(['python', 'recommendationapp/teams/loader.py'])
+@app.before_first_request
+def run_loader():
+    subprocess.Popen(['python', 'recommendationapp/teams/loader.py'])
 
 # To get the enumerate function in jinja2 (for event index)
 @app.template_filter('enumerate')

@@ -12,5 +12,8 @@
         {{form.mode.label}}<br>{{form.mode()}}<br><br>
         {{form.submit()}}<br><br>
     </form>
+    {% if code == 400 %}
+    <h3 align="center">User doesn't exist! Please enter the correct user_id!</h3>
+    {% endif %}
 </div>
 {% endblock %}

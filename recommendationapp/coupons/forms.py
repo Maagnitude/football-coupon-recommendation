@@ -7,3 +7,8 @@ class CouponForm(FlaskForm):
     mode = SelectField('Recommendation mode', choices=[('high', 'High'), ('low', 'Low'), ('random', 'Random')], default='1')
     matches = IntegerField('Number of matches')
     submit = SubmitField('Get Coupon')
+    
+class MyCouponForm(FlaskForm):
+    user_id = StringField('Your ID')
+    submit = SubmitField('Show My Coupons')
+    

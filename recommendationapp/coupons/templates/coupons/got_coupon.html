@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
-    <h1 align="center">Congratulations!</h1><br><br>
-    <h2 align="center">Your coupon is ready!</h2>
-    <h3 align="center">Hope you get rich! Have fun!</h3>
+    {% if from_form == 1 %}
+        <h1 align="center">Congratulations!</h1><br><br>
+        <h2 align="center">Your coupon is ready!</h2>
+        <h3 align="center">Hope you get <strong>rich</strong>! Have fun!</h3>
+    {% else %}
+        <h1 align="center">Here are your <strong>coupons</strong>!</h1><br><br>
+        <h2 align="center">If you want to get another one, go to <strong>Recommendations</strong> tab!</h2>
+        <h3 align="center">Hope you get <strong>rich</strong>! Have fun!</h3>
+    {% endif %}
     <style>
         table {
             width: 50%;
@@ -26,6 +32,8 @@
             text-align: right;
         }
     </style>
+    {% for i, coupon in coupons | enumerate(start=1) %}
+    <br><br><h3 align="center">Coupon no. {{ i }}</h3>
     <table align="center">
         <tr>
             <th>Stake</th>
@@ -45,12 +53,13 @@
             <th>Events</th>
             <th>Odds</th>
         </tr>
-        {% for selection in coupon.selections %}
+        {% for j, selection in coupon.selections | enumerate(start=1) %}
         <tr>
-            <td>{{ selection.event | get_event_participants(events) }}</td>
+            <td>{{j}}. {{ selection.event | get_event_participants(events) }}</td>
             <td>{{ selection.odd }}</td>
         </tr>
         {% endfor %}
     </table>
+    {% endfor %}
 </div>
 {% endblock %}
