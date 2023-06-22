@@ -1,0 +1,88 @@
+Folder PATH listing
+Volume serial number is A443-1B9B
+C:.
+|   app.py
+|   docker-compose.yml
+|   Dockerfile
+|   README.md
+|   requirements.txt
+|   tasks.py
+|   tree.txt
+|   
++---migrations
+|   |   alembic.ini
+|   |   env.py
+|   |   README
+|   |   script.py.mako
+|   |   
+|   +---versions
+|           ed139d2f77ed_initial_migrate.py
+|           
++---recommendationapp
+|   |   backup.sqlite
+|   |   data.sqlite
+|   |   funcs.py
+|   |   models.py
+|   |   validators.py
+|   |   __init__.py
+|   |   
+|   +---core
+|   |       views.py
+|   |       __init__.py
+|   |
+|   |           
+|   +---coupons
+|   |   |   forms.py
+|   |   |   views.py
+|   |   |   __init__.py
+|   |   |   
+|   |   +---templates
+|   |       \---coupons
+|   |               coupons.html
+|   |               got_coupon.html
+|   |               show_my_coupons.html              
+|   |           
+|   +---events
+|   |   |   views.py
+|   |   |   __init__.py
+|   |   |   
+|   |   +---templates
+|   |       \---events
+|   |               events.html
+|   |           
+|   +---teams
+|   |   |   countries.json
+|   |   |   loader.py
+|   |   |   
+|   |   +---data
+|   |           de.1.json
+|   |           en.1.json
+|   |           es.1.json
+|   |           fr.1.json
+|   |           gr.1.json
+|   |           hu.1.json
+|   |           it.1.json
+|   |           nl.1.json
+|   |           pt.1.json
+|   |           sco.1.json
+|   |           
+|   +---templates
+|   |       base.html
+|   |       index.html
+|   |       
+|   +---users
+|           views.py
+|           __init__.py
+|           
++---template_filters
+|       filters.py
+|       
++---tests
+        test_db_funcs.py
+        test_loader.py
+        test_validators.py
+        __init__.py
+
+           
+
+        
