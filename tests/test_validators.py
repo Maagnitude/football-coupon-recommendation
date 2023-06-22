@@ -1,6 +1,9 @@
 import unittest
 import jsonschema
-from recommendationapp.validators import validate_coupon, validate_event, validate_user
+from validators import validate_coupon, validate_event, validate_user
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'recommendationapp')))
 
 class TestValidateUser(unittest.TestCase):
     def test_valid_data(self):
