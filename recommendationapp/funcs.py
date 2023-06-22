@@ -180,7 +180,7 @@ def get_a_coupon():
     pass
 
 # COUPON MEGA FUNCTION
-def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
+def create_coupon(user_info: dict)-> Tuple[str, Union[dict, List[Coupon]]]:
     try:
         wanted_user = User.query.filter_by(user_id=user_info['user_id']).first()
         if wanted_user is None:
