@@ -1,49 +1,115 @@
 import sys, os
-from funcs import create_user, find_user, find_all_users
+from funcs import create_user, create_event
+from unittest import mock
 import unittest
-from unittest.mock import MagicMock, call
 
-class TestUserFunctions(unittest.TestCase):
-    def test_create_user(self):
+class TestCreateUser(unittest.TestCase):
+
+    def setUp(self):
+        self.db_session = mock.MagicMock(spec=['add_all', 'commit'])
+
+    def test_create_user_successfully(self):
         users = [
             {
-                'user_id': '1234',
-                'birth_year': 1990,
-                'country': 'US',
-                'currency': 'USD',
-                'gender': 'Male',
-                'registration_date': '2022-01-01'
+                "user_id": "1",
+                "birth_year": 1990,
+                "country": "IT",
+                "currency": "EUR",
+                "gender": "Male",
+                "registration_date": "2018-04-07T12:08:54"
             },
             {
-                'user_id': '5678',
-                'birth_year': 1985,
-                'country': 'DE',
-                'currency': 'EUR',
-                'gender': 'Female',
-                'registration_date': '2021-12-01'
+                "user_id": "2",
+                "birth_year": 1985,
+                "country": "USA",
+                "currency": "USD",
+                "gender": "Female",
+                "registration_date": "2018-04-07T12:08:54"
             }
         ]
+        response = create_user(users, self.db_session)
 
-        mock_db_session = MagicMock()
+        self.assertEqual(response[-1], 200)
+        self.assertTrue(self.db_session.add_all.called)
+        self.assertTrue(self.db_session.commit.called)
 
-        # Mock the User class
-        mock_user_class = MagicMock(name='User')
-        mock_user_instance = mock_user_class.return_value
-
-        # Call the function being tested
-        result, status_code = create_user(users, mock_db_session)
-
-        # Assert the calls
-        expected_calls = [
-            call(user_id='1234', birth_year=1990, country='US', currency='USD', gender='Male', registration_date='2022-01-01'),
-            call(user_id='5678', birth_year=1985, country='DE', currency='EUR', gender='Female', registration_date='2021-12-01')
+    def test_create_user_duplicate_id(self):
+        users = [
+            {
+                "user_id": "1",
+                "birth_year": 1990,
+                "country": "IT",
+                "currency": "EUR",
+                "gender": "Male",
+                "registration_date": "2018-04-07T12:08:54"
+            }
         ]
-        mock_user_class.assert_has_calls(expected_calls)
-        mock_db_session.add_all.assert_called_once_with([mock_user_instance, mock_user_instance])
-        mock_db_session.commit.assert_called_once()
+        self.db_session.commit.side_effect = Exception("UNIQUE constraint failed")
 
-        self.assertEqual(result, ["Users created successfully"])
-        self.assertEqual(status_code, 200)
+
+        response = create_user(users, self.db_session)
+
+        expected_error = "User creation failed! There is a user with the same ID! (user_id=1)"
+        self.assertEqual(response, (expected_error, 400))
+        self.assertTrue(self.db_session.add_all.called)
+        self.assertTrue(self.db_session.commit.called)
+
+
+class TestCreateEvent(unittest.TestCase):
+
+    def setUp(self):
+        self.db_session = mock.MagicMock(spec=['add_all', 'commit'])
+
+    def test_create_event_successfully(self):
+        events = [
+            {
+                    "home": "Liverpool",
+                    "away": "Arsenal",
+                    "begin_timestamp": "2020-02-09 18:00:00+00",
+                    "country": "England",
+                    "end_timestamp": "2021-01-01 00:00:00+00",
+                    "event_id": "1",
+                    "league": "Premier League",
+                    "sport": "football"
+                },
+                {
+                    "home": "Liverpool",
+                    "away": "Arsenal",
+                    "begin_timestamp": "2020-02-09 18:00:00+00",
+                    "country": "England",
+                    "end_timestamp": "2021-01-01 00:00:00+00",
+                    "event_id": "2",
+                    "league": "Premier League",
+                    "sport": "football"
+            }
+        ]
+        response = create_event(events, self.db_session)
+
+        self.assertEqual(response[-1], 200)
+        self.assertTrue(self.db_session.add_all.called)
+        self.assertTrue(self.db_session.commit.called)
+
+    def test_create_event_duplicate_id(self):
+        events = [
+            {
+                    "home": "Liverpool",
+                    "away": "Arsenal",
+                    "begin_timestamp": "2020-02-09 18:00:00+00",
+                    "country": "England",
+                    "end_timestamp": "2021-01-01 00:00:00+00",
+                    "event_id": "1",
+                    "league": "Premier League",
+                    "sport": "football"
+            }
+        ]
+        self.db_session.commit.side_effect = Exception("UNIQUE constraint failed")
+
+        response = create_event(events, self.db_session)
+
+        expected_error = "Event creation failed! There is an event with the same ID! (event_id=1)"
+        self.assertEqual(response, (expected_error, 400))
+        self.assertTrue(self.db_session.add_all.called)
+        self.assertTrue(self.db_session.commit.called)
         
 if __name__ == '__main__':
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'recommendationapp')))
