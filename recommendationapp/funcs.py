@@ -1,10 +1,8 @@
 from flask import jsonify
-from recommendationapp import db
 from recommendationapp.models import User, Event, Coupon, Odd
 from recommendationapp.validators import validate_user, validate_event, validate_coupon
 from typing import Tuple, Union, List
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
 import datetime
 import uuid
 import random
@@ -49,19 +47,18 @@ def find_user(wanted_user: dict)-> Tuple[str, Union[dict, User]]:
                 "gender": user.gender,
                 "registration_date": user.registration_date
             }
-            return jsonify("User found!", user_dict), 200
+            return user_dict, 200
         else: 
             return jsonify(f"User with ID: {wanted_user['user_id']} doesn't exist!"), 400
     except Exception as e:
         error_message = str(e)
-        return jsonify("User not found!", "More details: ", error_message), 400
+        return error_message, 400
 
 def find_all_users()-> Tuple[str, Union[dict, User]]:
     users = User.query.all()
     users_list=[]
-    for i, user in enumerate(users):
+    for user in users:
         user_dict = {
-                f"User no. {i+1}": {
                     "user_id": user.user_id,
                     "birth_year": user.birth_year,
                     "country": user.country,
@@ -69,9 +66,8 @@ def find_all_users()-> Tuple[str, Union[dict, User]]:
                     "gender": user.gender,
                     "registration_date": user.registration_date
                 }
-            }
         users_list.append(user_dict)
-    return jsonify("List of all the users: ", users_list), 200
+    return users_list, 200
 
 # EVENT FUNCTIONS
 def create_event(events: List[dict], db_session: Session)-> Tuple[str, Union[dict, List[Event]]]:
@@ -89,10 +85,10 @@ def create_event(events: List[dict], db_session: Session)-> Tuple[str, Union[dic
                 sport = event_data['sport']
             )
             event_objects.append(event_obj)
-        db.session.add_all(event_objects)
-        db.session.commit()
+        db_session.add_all(event_objects)
+        db_session.commit()
         
-        event_matches = [str(f'{event_data["home"]} vs {event_data["away"]}') for event_data in events]
+        # event_matches = [str(f'{event_data["home"]} vs {event_data["away"]}') for event_data in events]
         # print(f"Events: {', '.join(event_matches)} have been created.")
         event_objects.append("Events created successfully")
         return event_objects, 200
@@ -150,8 +146,8 @@ def create_odds(odds: List[dict], db_session: Session)-> Tuple[str, Union[dict, 
                 odds = odd["odds"]
             )
             odd_objects.append(odd_obj)
-        db.session.add_all(odd_objects)
-        db.session.commit()
+        db_session.add_all(odd_objects)
+        db_session.commit()
         odd_ids = [str(odd_data['event_id']) for odd_data in odds]
         # print(f"Odds with IDs: {', '.join(odd_ids)} have been created.")
         odd_objects.append("Odds created successfully")
@@ -175,12 +171,8 @@ def find_all_odds()-> Tuple[str, Union[dict, Odd]]:
         odds_list.append(odd_dict) 
     return odds_list, 200    
 
-# COUPON FUNCTIONS
-def get_a_coupon():
-    pass
-
 # COUPON MEGA FUNCTION
-def create_coupon(user_info: dict)-> Tuple[str, Union[dict, List[Coupon]]]:
+def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
     try:
         wanted_user = User.query.filter_by(user_id=user_info['user_id']).first()
         if wanted_user is None:
@@ -234,8 +226,8 @@ def create_coupon(user_info: dict)-> Tuple[str, Union[dict, List[Coupon]]]:
                             timestamp=coupons['timestamp'],
                             user_id=coupons['user_id'])
         
-        db.session.add(new_coupon)
-        db.session.commit()
+        db_session.add(new_coupon)
+        db_session.commit()
         return coupons, 200
     except Exception as e:
         error_message = str(e)
@@ -247,7 +239,7 @@ def find_coupons(user_id):
         return jsonify(f"User with ID: {user_id} doesn't exist!"), 400
     coupons = Coupon.query.filter_by(user_id=user_id).all()
     coupons_list=[]
-    for i, coupon in enumerate(coupons):
+    for coupon in coupons:
         coupon_dict = {
                     "coupon_id": coupon.coupon_id,
                     "selections": coupon.selections,

@@ -34,8 +34,10 @@ def get_coupon():
             'mode': mode,
             'matches': matches
         }
-        
-        coupons, code = create_coupon(user_info)
+        Session = sessionmaker(bind=db.engine)
+        session = Session()
+        coupons, code = create_coupon(user_info, session)
+        session.close()
         if code == 400:
             return render_template('coupons.html', form=form, code=code)
         events = find_all_events()[0]

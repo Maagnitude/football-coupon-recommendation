@@ -5,8 +5,6 @@ from teams.loader import load_leagues, export_teams, generate_events, \
 import unittest
 import uuid
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'recommendationapp')))
-
 # 1. load_leagues(league_json_files) test
 class TestLoadLeagues(TestCase):
     def test_load_leagues(self):
@@ -117,4 +115,5 @@ class TestCreateUsers(unittest.TestCase):
         self.assertIsInstance(users[0]['registration_date'], str)
         
 if __name__ == '__main__':
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'recommendationapp')))
     unittest.main()

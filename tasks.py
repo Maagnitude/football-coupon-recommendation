@@ -1,7 +1,8 @@
 import pika
 import json
 from recommendationapp.funcs import create_coupon
-from recommendationapp import app
+from recommendationapp import app, db
+from sqlalchemy.orm import sessionmaker
 
 # CONSUMER
 print(' Connecting to server ...')
@@ -18,7 +19,10 @@ print(' Waiting for messages...')
 
 def callback(ch, method, properties, body):
     with app.app_context():
-        coupons, code = create_coupon(json.loads(body))
+        Session = sessionmaker(bind=db.engine)
+        session = Session()
+        coupons, code = create_coupon(json.loads(body), session)
+        session.close()
         print(" Received %s" % coupons)
         print(" Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)

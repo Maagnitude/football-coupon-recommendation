@@ -22,3 +22,8 @@ python app.py
 
 ## Fill the form to send data to the consumer
 
+
+## To run the tests
+```
+python -m unittest discover tests
+```
