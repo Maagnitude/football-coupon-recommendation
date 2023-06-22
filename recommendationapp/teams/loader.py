@@ -6,6 +6,8 @@ import datetime
 import uuid
 import requests
 
+# TESTS FOR load_leagues, export_teams, generate_events, create_events, add_odds, load_countries, create_users OK
+
 # LEAGUES FOR EVENTS
 def load_leagues(league_json_files):
     leagues = []

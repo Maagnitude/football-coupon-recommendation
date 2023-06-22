@@ -4,8 +4,7 @@ from sqlalchemy.dialects.sqlite import JSON
 ##################################################
 ##################### MODELS #####################
 ##################################################
-class Coupon(db.Model):
-    
+class Coupon(db.Model):   
     __tablename__ = 'coupons'
     
     coupon_id = db.Column(db.String(50), primary_key=True)
@@ -32,10 +31,8 @@ class Coupon(db.Model):
         
     def __repr__(self):
         return f"Coupon with ID: {self.coupon_id}, has a stake of {self.stake}."
-    
-    
-class User(db.Model):
-    
+      
+class User(db.Model):   
     __tablename__ = 'users'
     
     user_id = db.Column(db.String(50), primary_key=True)
@@ -67,10 +64,8 @@ class User(db.Model):
         
     def __repr__(self):
         return f"User with ID: {self.user_id} is from {self.country} and registered on {self.registration_date}."
-    
-    
-class Event(db.Model):
-    
+       
+class Event(db.Model):  
     __tablename__ = 'events'
     
     begin_timestamp = db.Column(db.String(50))
@@ -104,7 +99,6 @@ class Event(db.Model):
         return f"Event with ID: {self.event_id} is placed in {self.country} and begins at {self.begin_timestamp}."
     
 class Odd(db.Model):
-    
     __tablename__ = 'odds'
     
     odd_id = db.Column(db.String(50), primary_key=True)

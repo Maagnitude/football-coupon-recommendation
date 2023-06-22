@@ -23,7 +23,7 @@ def get_user():
 def get_all_users():
     return find_all_users()
 
-# DELETES ALL ROWS FROM ALL TABLES (But not the tables themselves)
+# DELETES ALL ROWS FROM ALL TABLES (But not the tables themselves) USE WITH CAUTION
 @users.route('/api/delete_all_rows', methods=['DELETE'])
 def delete_all_rows():
     try:

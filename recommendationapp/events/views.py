@@ -2,7 +2,6 @@ from flask import request, Blueprint, jsonify, render_template
 from recommendationapp.funcs import create_event, find_event, find_all_events, create_odds, find_all_odds
 from recommendationapp import db
 from sqlalchemy.orm import sessionmaker
-import json
 
 events = Blueprint('events', __name__, template_folder='templates/events')
 

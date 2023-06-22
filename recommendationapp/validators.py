@@ -1,5 +1,7 @@
 import jsonschema
 
+# TESTS OK
+
 def validate_user(data):    
     schema = {
         "type": "object",

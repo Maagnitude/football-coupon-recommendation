@@ -7,7 +7,10 @@ import datetime
 import uuid
 import random
 
+# TESTS FOR CREATE USER, EVENT OK
+
 # USER FUNCTIONS
+# CREATE NEW USERS (+BULK)
 def create_user(users: List[dict], db_session: Session) -> Tuple[str, Union[dict, List[User]]]:
     try:
         user_objects = []
@@ -34,7 +37,7 @@ def create_user(users: List[dict], db_session: Session) -> Tuple[str, Union[dict
             return f"User creation failed! There is a user with the same ID! (user_id={user_data['user_id']})", 400
         return f"User creation failed! More details: {error_message}", 400
 
-
+# FIND A USER BY HIS/HER ID
 def find_user(wanted_user: dict)-> Tuple[str, Union[dict, User]]:
     try:
         user = User.query.filter_by(user_id=wanted_user['user_id']).first()
@@ -54,6 +57,7 @@ def find_user(wanted_user: dict)-> Tuple[str, Union[dict, User]]:
         error_message = str(e)
         return error_message, 400
 
+# FIND ALL THE USERS
 def find_all_users()-> Tuple[str, Union[dict, User]]:
     users = User.query.all()
     users_list=[]
@@ -70,6 +74,7 @@ def find_all_users()-> Tuple[str, Union[dict, User]]:
     return users_list, 200
 
 # EVENT FUNCTIONS
+# CREATE NEW EVENTS (+BULK)
 def create_event(events: List[dict], db_session: Session)-> Tuple[str, Union[dict, List[Event]]]:
     try:
         event_objects = []
@@ -99,6 +104,7 @@ def create_event(events: List[dict], db_session: Session)-> Tuple[str, Union[dic
             return f"Event creation failed! There is an event with the same ID! (event_id={event_data['event_id']})", 400
         return f"Event creation failed! More details: {error_message}", 400
 
+# FIND AN EVENT BY ITS ID
 def find_event(wanted_event: dict)-> Tuple[str, Union[dict, Event]]:
     try:
         event = Event.query.filter_by(event_id=wanted_event['event_id']).first()
@@ -119,6 +125,7 @@ def find_event(wanted_event: dict)-> Tuple[str, Union[dict, Event]]:
         error_message = str(e)
         return jsonify("Event not found!", "More details: ", error_message), 400
 
+# FIND ALL THE EVENTS
 def find_all_events()-> Tuple[str, Union[dict, Event]]:
     events = Event.query.all()
     events_list=[]
@@ -136,6 +143,7 @@ def find_all_events()-> Tuple[str, Union[dict, Event]]:
     return events_list, 200
 
 # ODDS FUNCTIONS
+# CREATE ODDS FOR EVENTS (+BULK)
 def create_odds(odds: List[dict], db_session: Session)-> Tuple[str, Union[dict, List[Odd]]]:
     try:
         odd_objects = []
@@ -158,7 +166,8 @@ def create_odds(odds: List[dict], db_session: Session)-> Tuple[str, Union[dict, 
         if error_message.__contains__("UNIQUE constraint failed"):
             return f"Odd creation failed! There is an odd with the same ID! (odd_id={odd['odd_id']})", 400
         return f"Odd creation failed! More details: {error_message}", 400
-    
+
+# FIND ALL THE ODDS   
 def find_all_odds()-> Tuple[str, Union[dict, Odd]]:
     odds = Odd.query.all()
     odds_list=[]
@@ -171,7 +180,8 @@ def find_all_odds()-> Tuple[str, Union[dict, Odd]]:
         odds_list.append(odd_dict) 
     return odds_list, 200    
 
-# COUPON MEGA FUNCTION
+# COUPON FUNCTIONS
+# CREATE A COUPON FOR A USER
 def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
     try:
         wanted_user = User.query.filter_by(user_id=user_info['user_id']).first()
@@ -232,7 +242,8 @@ def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict,
     except Exception as e:
         error_message = str(e)
         return error_message, 400
-    
+
+# FIND USER COUPONS    
 def find_coupons(user_id):
     wanted_user = User.query.filter_by(user_id=user_id).first()
     if wanted_user is None:
