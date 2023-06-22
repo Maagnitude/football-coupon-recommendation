@@ -9,3 +9,16 @@ flask db migrate -m "Initial migration"
 ```
 flask db upgrade
 ```
+
+## To run the consumer
+```
+python tasks.py
+```
+
+## To begin the app server
+```
+python app.py
+```
+
+## Fill the form to send data to the consumer
+
