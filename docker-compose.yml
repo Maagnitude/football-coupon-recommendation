@@ -9,10 +9,6 @@ services:
     container_name: recommendationapp
     environment:
       AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-    volumes:
-      - ./app.py:/usr/src/app/app.py
-      - ./recommendationapp:/usr/src/app/recommendationapp
-      - ./consumer:/usr/src/app/consumer
     ports:
       - "5000:5000"
 
@@ -42,18 +38,14 @@ services:
         - rabbit_mq
     environment:
         AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-    volumes:
-      - ./consumer/consumer.py:/usr/src/app/consumer/consumer.py
-      - ./recommendationapp:/usr/src/app/consumer/recommendationapp
 
-  # consumer2:
-  #   build: consumer
-  #   depends_on:
-  #       - rabbit_mq
-  #   environment:
-  #       AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-  #   volumes:
-  #     - ./consumer:/usr/src/app/consumer
+  consumer2:
+    build:
+      dockerfile: Dockerfile_consumer
+    depends_on:
+        - rabbit_mq
+    environment:
+        AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
 
 volumes:
     rabbit_mqdata:

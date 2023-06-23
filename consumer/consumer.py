@@ -25,7 +25,6 @@ channel.queue_declare(queue='coupon_queue', durable=True)
 print(' Waiting for messages...')
 
 def callback(ch, method, properties, body):
-    print("HELLO2")
     with app.app_context():
         Session = sessionmaker(bind=db.engine)
         session = Session()
