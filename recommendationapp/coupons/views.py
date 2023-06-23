@@ -3,7 +3,7 @@ from recommendationapp.funcs import create_coupon, find_all_events, find_coupons
 from recommendationapp import db
 from sqlalchemy.orm import sessionmaker
 from recommendationapp.coupons.forms import CouponForm, MyCouponForm
-import pika, json
+import pika, json, os
 
 coupons = Blueprint('coupons', __name__, template_folder='templates/coupons')
 
@@ -20,6 +20,7 @@ def api_get_coupon():
 
 @coupons.route('/coupons', methods=['GET', 'POST'])
 def get_coupon():
+    print("HI")
     form = CouponForm()
     
     if form.validate_on_submit():
@@ -68,6 +69,9 @@ def got_coupon():
 # PRODUCER
 @coupons.route('/testcoupon', methods=['GET', 'POST'])
 def coupon_test():
+    print("HELLO")
+    amqp_url = os.environ['AMQP_URL']
+    url_params = pika.URLParameters(amqp_url)
     form = CouponForm()
     
     if form.validate_on_submit():     
@@ -82,20 +86,40 @@ def coupon_test():
             'mode': mode,
             'matches': matches
         }
-        try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost", port=5672, virtual_host="/", credentials=pika.PlainCredentials("kazazis", "1234")))
-        except pika.exceptions.AMQPConnectionError as exc:
-            print("Failed to connect to RabbitMQ service. Message wont be sent.")
-            return
+    # user_json = request.get_json()
+    try:
+        # With docker
+        connection = pika.BlockingConnection(url_params)
+        # Without docker
+        # connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost", port=5672, virtual_host="/", credentials=pika.PlainCredentials("kazazis", "1234")))
+    except pika.exceptions.AMQPConnectionError as exc:
+        print("Failed to connect to RabbitMQ service. Message wont be sent.")
 
-        channel = connection.channel()
-        channel.queue_declare(queue='task_queue', durable=True)
-        channel.basic_publish(
-            exchange='',
-            routing_key='task_queue',
-            body=json.dumps(user_info),
-            properties=pika.BasicProperties(
-                delivery_mode=2,  # make message persistent
-            ))
-        connection.close()
-    return render_template('coupons.html', form=form)
+    channel = connection.channel()
+    channel.queue_declare(queue='coupon_queue', durable=True)
+    channel.basic_publish(
+        exchange='',
+        routing_key='coupon_queue',
+        body=json.dumps(user_info),
+        properties=pika.BasicProperties(
+            delivery_mode=2,  # make message persistent
+        ))
+    connection.close()
+    return jsonify({"HELLO": "WORLD"})
+    # return render_template('coupons.html', form=form)
+
+# amqp_url = os.environ['AMQP_URL']
+# url_params = pika.URLParameters(amqp_url)
+
+# connection = pika.BlockingConnection(url_params)
+
+# channel = connection.channel()
+# channel.queue_declare(queue='task_queue', durable=True)
+# channel.basic_publish(
+#         exchange='',
+#         routing_key='task_queue',
+#         body=json.dumps({"HELLO": "WORLD"}),
+#         properties=pika.BasicProperties(
+#             delivery_mode=2,  # make message persistent
+#         ))
+# connection.close()
