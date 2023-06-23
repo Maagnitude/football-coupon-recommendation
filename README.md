@@ -27,3 +27,11 @@ python app.py
 ```
 python -m unittest discover tests
 ```
+
+## Dockerize
+```
+docker-compose up
+```
+It creates 1 container for the app, 2 containers for the 2 consumers, and 1 container for RabbitMQ
+
+## Producer sends to "localhost:5000/api/get_coupon" the user_info, and consumer receives a new coupon

@@ -20,7 +20,6 @@ def api_get_coupon():
 
 @coupons.route('/coupons', methods=['GET', 'POST'])
 def get_coupon():
-    print("HI")
     form = CouponForm()
     
     if form.validate_on_submit():
