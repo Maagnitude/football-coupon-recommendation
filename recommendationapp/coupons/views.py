@@ -67,31 +67,17 @@ def got_coupon():
     return render_template('show_my_coupons.html', form=form)
 
 # PRODUCER
-@coupons.route('/testcoupon', methods=['GET', 'POST'])
+@coupons.route('/api/get_coupon', methods=['GET', 'POST'])
 def coupon_test():
-    print("HELLO")
     amqp_url = os.environ['AMQP_URL']
     url_params = pika.URLParameters(amqp_url)
-    form = CouponForm()
     
-    if form.validate_on_submit():     
-        user_id = form.user_id.data
-        matches = form.matches.data
-        stake = form.stake.data
-        mode = form.mode.data
-        
-        user_info = {
-            'user_id': user_id,
-            'stake': stake,
-            'mode': mode,
-            'matches': matches
-        }
-    # user_json = request.get_json()
+    user_info = request.get_json()
     try:
         # With docker
         connection = pika.BlockingConnection(url_params)
         # Without docker
-        # connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost", port=5672, virtual_host="/", credentials=pika.PlainCredentials("kazazis", "1234")))
+        # connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost", port=5672, virtual_host="/", credentials=pika.PlainCredentials("guest", "guest")))
     except pika.exceptions.AMQPConnectionError as exc:
         print("Failed to connect to RabbitMQ service. Message wont be sent.")
 
@@ -105,21 +91,4 @@ def coupon_test():
             delivery_mode=2,  # make message persistent
         ))
     connection.close()
-    return jsonify({"HELLO": "WORLD"})
-    # return render_template('coupons.html', form=form)
-
-# amqp_url = os.environ['AMQP_URL']
-# url_params = pika.URLParameters(amqp_url)
-
-# connection = pika.BlockingConnection(url_params)
-
-# channel = connection.channel()
-# channel.queue_declare(queue='task_queue', durable=True)
-# channel.basic_publish(
-#         exchange='',
-#         routing_key='task_queue',
-#         body=json.dumps({"HELLO": "WORLD"}),
-#         properties=pika.BasicProperties(
-#             delivery_mode=2,  # make message persistent
-#         ))
-# connection.close()
+    return jsonify("user_info...", user_info, "...sent to coupon_queue")
