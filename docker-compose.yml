@@ -1,32 +1,60 @@
-version: "3.8"
+version: "3.2"
+
+# list of containers to be run
 services:
-  app:
-    build:
+  recommendationapp:
+    build: 
       context: .
       dockerfile: Dockerfile
+    container_name: recommendationapp
+    environment:
+      AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+    volumes:
+      - ./app.py:/usr/src/app/app.py
+      - ./recommendationapp:/usr/src/app/recommendationapp
+      - ./consumer:/usr/src/app/consumer
     ports:
       - "5000:5000"
-    volumes:
-      - .:/app
-    environment:
-      - FLASK_ENV=development
-      - FLASK_APP=app.py
-    command: flask run --host=0.0.0.0
 
-  rabbitmq:
-    image: rabbitmq:3.9.11
+  # rabbit_mq container uses the default rabbitmq image
+  # exposes the ports
+  # uses the specified volume
+  rabbit_mq:
+
+    # we use management image to get the
+    # plugin for web dashboard
+    image: rabbitmq:3.12.0-management
+    container_name: rabbit_mq
     ports:
-      - "5672:5672"
-      - "15672:15672"
-  
-  consumer:
-    build: .
+        - '5672:5672'
+        - '15672:15672'
     volumes:
-      - .:/app
+      - rabbit_mqdata:/usr/share/rabbitmq/data
+
+  # consumer container builds the consumer image
+  # and consumes messages from the queue
+  # we spawn 2 consumer containers to run parallely
+  # on the same queue
+  consumer1:
+    build:
+      dockerfile: Dockerfile_consumer
     depends_on:
-      - rabbitmq
-      - pika 
-    command: python tasks.py
+        - rabbit_mq
+    environment:
+        AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+    volumes:
+      - ./consumer/consumer.py:/usr/src/app/consumer/consumer.py
+      - ./recommendationapp:/usr/src/app/consumer/recommendationapp
+
+  # consumer2:
+  #   build: consumer
+  #   depends_on:
+  #       - rabbit_mq
+  #   environment:
+  #       AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+  #   volumes:
+  #     - ./consumer:/usr/src/app/consumer
 
 volumes:
-  db_data:
+    rabbit_mqdata:
+      driver: local
