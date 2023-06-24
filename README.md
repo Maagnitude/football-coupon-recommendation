@@ -28,7 +28,7 @@ python app.py
 python -m unittest discover tests
 ```
 
-## Dockerize
+## Dockerization
 ```
 docker-compose up
 ```
