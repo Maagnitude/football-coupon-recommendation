@@ -1,6 +1,4 @@
 version: "3.2"
-
-# list of containers to be run
 services:
   recommendationapp:
     build: 
@@ -12,13 +10,8 @@ services:
     ports:
       - "5000:5000"
 
-  # rabbit_mq container uses the default rabbitmq image
-  # exposes the ports
-  # uses the specified volume
   rabbit_mq:
-
-    # we use management image to get the
-    # plugin for web dashboard
+    # management image -> web dashboard
     image: rabbitmq:3.12.0-management
     container_name: rabbit_mq
     ports:
@@ -27,10 +20,6 @@ services:
     volumes:
       - rabbit_mqdata:/usr/share/rabbitmq/data
 
-  # consumer container builds the consumer image
-  # and consumes messages from the queue
-  # we spawn 2 consumer containers to run parallely
-  # on the same queue
   consumer1:
     build:
       dockerfile: Dockerfile_consumer

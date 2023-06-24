@@ -1,0 +1,332 @@
+{
+	"info": {
+		"_postman_id": "169fe2be-086c-4e42-98f4-e45fd247a937",
+		"name": "Football Coupon Recommendation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24718167"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "register_user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n    \"user_id\": 27451234,\r\n    \"birth_year\": 1990,\r\n    \"country\": \"GRE\",\r\n    \"currency\": \"EUR\",\r\n    \"gender\": \"Male\",\r\n    \"registration_date\": \"2018-04-07T12:08:54\"\r\n    },\r\n    {\r\n    \"user_id\": 223452341,\r\n    \"birth_year\": 1990,\r\n    \"country\": \"GRE\",\r\n    \"currency\": \"EUR\",\r\n    \"gender\": \"Male\",\r\n    \"registration_date\": \"2018-04-07T12:08:54\"\r\n    },\r\n    {\r\n    \"user_id\": 224562452,\r\n    \"birth_year\": 1990,\r\n    \"country\": \"GRE\",\r\n    \"currency\": \"EUR\",\r\n    \"gender\": \"Male\",\r\n    \"registration_date\": \"2018-04-07T12:08:54\"\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/register_user",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"register_user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": \"761816f8-603a-4b25-aac6-d309322a3f1a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/get_user",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"get_user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_all_users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/get_all_users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"get_all_users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_all_tables",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:5000/api/delete_all_rows",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"delete_all_rows"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "register_event",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n    \"home\": \"Liverpool\",\r\n    \"away\": \"Arsenal\",\r\n    \"begin_timestamp\": \"2020-02-09 18:00:00+00\",\r\n    \"country\": \"England\",\r\n    \"end_timestamp\": \"2020-02-09 18:45:00+00\",\r\n    \"event_id\": \"bdff3957-15d7-4f3c-8e7e-48a645596422\",\r\n    \"league\": \"Premier League\",\r\n    \"sport\": \"football\"\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/register_event",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"register_event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_get_event",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"event_id\": \"1891e3b0-ba71-408e-92ae-a63a1d4bae4e\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/get_event",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"get_event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_get_all_events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:5000/api/get_all_events",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"get_all_events"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recommendations",
+			"item": [
+				{
+					"name": "api_coupons",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n    \"user_id\": \"eb88f667-15bc-4c27-a598-6bb568fd6f3a\",\r\n    \"stake\": 20.0,\r\n    \"mode\": \"high\",\r\n    \"matches\": 5\r\n    },\r\n    {\r\n    \"user_id\": \"4903bbd2-8a4b-4819-8291-4b9fdd797015\",\r\n    \"stake\": 20.0,\r\n    \"mode\": \"high\",\r\n    \"matches\": 5\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/coupons",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"coupons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "api_get_coupon",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": \"8a944c2e-7709-4fc1-a711-f15ddb5f1f0e\",\r\n    \"stake\": 20.0,\r\n    \"mode\": \"high\",\r\n    \"matches\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/get_coupon",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"get_coupon"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Odds",
+			"item": [
+				{
+					"name": "register_odds",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n    \"odd_id\": \"19ad7a3e-3417-4976-852a-b1730ad1de47\",\r\n     \"event_id\": \"201832b2-42aa-46a1-aeff-989c956e6354\", \r\n     \"odds\": 3.6505768625043977\r\n     },\r\n     {\r\n    \"odd_id\": \"19ad7a3e-3417-4976-852a-b1730ad1de48\",\r\n     \"event_id\": \"201832b2-42aa-46a1-aeff-989c956e6354\", \r\n     \"odds\": 3.6505768625043977\r\n     }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/register_odds",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"register_odds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_all_odds",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:5000/get_odds",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"get_odds"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

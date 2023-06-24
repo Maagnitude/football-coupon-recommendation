@@ -4,11 +4,14 @@ C:.
 |   app.py
 |   docker-compose.yml
 |   Dockerfile
+|   Dockerfile_consumer
 |   README.md
 |   requirements.txt
-|   tasks.py
 |   tree.txt
 |   
++---consumer
+|       consumer.py
+|       
 +---migrations
 |   |   alembic.ini
 |   |   env.py
@@ -16,8 +19,11 @@ C:.
 |   |   script.py.mako
 |   |   
 |   +---versions
-|           ed139d2f77ed_initial_migrate.py
-|           
+|       |   ed139d2f77ed_initial_migrate.py
+|       |   
+|       \---__pycache__
+|               ed139d2f77ed_initial_migrate.cpython-311.pyc
+|          
 +---recommendationapp
 |   |   backup.sqlite
 |   |   data.sqlite
@@ -29,7 +35,6 @@ C:.
 |   +---core
 |   |       views.py
 |   |       __init__.py
-|   |
 |   |           
 |   +---coupons
 |   |   |   forms.py
@@ -40,7 +45,7 @@ C:.
 |   |       \---coupons
 |   |               coupons.html
 |   |               got_coupon.html
-|   |               show_my_coupons.html              
+|   |               show_my_coupons.html
 |   |           
 |   +---events
 |   |   |   views.py
@@ -76,13 +81,10 @@ C:.
 |           
 +---template_filters
 |       filters.py
-|       
+|       __init__.py
+|           
 +---tests
         test_db_funcs.py
         test_loader.py
         test_validators.py
         __init__.py
-
-           
-
-        
