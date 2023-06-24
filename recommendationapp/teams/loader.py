@@ -107,6 +107,19 @@ def create_users(country_list):
 
 def import_users(users):
     requests.post('http://127.0.0.1:5000/register_user', json=users)
+    
+def create_user_info(users):
+    users_info = []
+    for user in users:
+        users_info.append({"user_id": user["user_id"],
+                          "stake": random.uniform(1, 20),
+                          "mode": random.choice(["high", "low", "random"]),
+                          "matches": random.randint(1, 10)})
+    return users_info
+
+def import_coupons(users_info):
+    requests.post('http://127.0.0.1:5000/api/coupons', json=users_info)
+
 
 if __name__ == '__main__':
     working_directory = os.getcwd()
@@ -121,3 +134,5 @@ if __name__ == '__main__':
     country_list = load_countries(countries_json)
     users = create_users(country_list)
     import_users(users)
+    users_info = create_user_info(users)
+    import_coupons(users_info)
