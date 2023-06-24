@@ -181,68 +181,72 @@ def find_all_odds()-> Tuple[str, Union[dict, Odd]]:
     return odds_list, 200    
 
 # COUPON FUNCTIONS
-# CREATE A COUPON FOR A USER
-def create_coupon(user_info: dict, db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
+# CREATE COUPONS FOR USERS (+BULK)
+def create_coupon(users_info: List[dict], db_session: Session)-> Tuple[str, Union[dict, List[Coupon]]]:
     try:
-        wanted_user = User.query.filter_by(user_id=user_info['user_id']).first()
-        if wanted_user is None:
-            return jsonify(f"User with ID: {user_info['user_id']} doesn't exist!"), 400
-        odds = Odd.query.all()
-        if odds is None:
-            return jsonify("There are no odds in the database!"), 400
-        stake = user_info['stake']
-        user_id = user_info['user_id']
-        mode = user_info['mode']
-        number_of_matchers = user_info['matches']
-        
-        odds_list=[]
-        for odd in odds:
-            odd_dict = {
+        coupons = []
+        coupons_to_disp = []
+        for user_info in users_info:
+            wanted_user = User.query.filter_by(user_id=user_info['user_id']).first()
+            if wanted_user is None:
+                return jsonify(f"User with ID: {user_info['user_id']} doesn't exist!"), 400
+            odds = Odd.query.all()
+            if odds is None:
+                return jsonify("There are no odds in the database!"), 400
+            stake = user_info['stake']
+            user_id = user_info['user_id']
+            mode = user_info['mode']
+            number_of_matchers = user_info['matches']
+            odds_list=[]
+            for odd in odds:
+                odd_dict = {
                         "odd_id": odd.odd_id,
                         "event_id": odd.event_id,
                         "odds": odd.odds
                     }
-            odds_list.append(odd_dict)
-
-        selections = []
-        if mode == "random":
-            for _ in range(number_of_matchers):
-                random_odds = random.choice(odds_list)
-                selections.append({"event": random_odds["event_id"], "odd": random_odds["odds"]})
-        elif mode == "high":
-            for _ in range(number_of_matchers):
-                max_odd = max(odds_list, key=lambda x: x['odds'])
-                selections.append({"event": max_odd["event_id"], "odd": max_odd["odds"]})
-                odds_list.remove(max_odd)
-        elif mode == "low":
-            for _ in range(number_of_matchers):
-                min_odd = min(odds_list, key=lambda x: x['odds'])
-                selections.append({"event": min_odd["event_id"], "odd": min_odd["odds"]})
-                odds_list.remove(min_odd)
-        else:
-            return "Invalid mode!", 400
-        
-        coupons = {
-            "coupon_id": str(uuid.uuid4()),
-            "selections": selections,
-            "stake": stake,
-            "timestamp": str(datetime.datetime.now()),
-            "user_id": user_id
-        }
-        coupons = validate_coupon(coupons)
-        new_coupon = Coupon(coupon_id=coupons['coupon_id'],
-                            selections=coupons['selections'],
-                            stake=coupons['stake'],
-                            timestamp=coupons['timestamp'],
-                            user_id=coupons['user_id'])
-        
-        db_session.add(new_coupon)
+                odds_list.append(odd_dict)
+            
+            selections = []
+            if mode == "random":
+                for _ in range(number_of_matchers):
+                    random_odds = random.choice(odds_list)
+                    selections.append({"event": random_odds["event_id"], "odd": random_odds["odds"]})
+            elif mode == "high":
+                for _ in range(number_of_matchers):
+                    max_odd = max(odds_list, key=lambda x: x['odds'])
+                    selections.append({"event": max_odd["event_id"], "odd": max_odd["odds"]})
+                    odds_list.remove(max_odd)
+            elif mode == "low":
+                for _ in range(number_of_matchers):
+                    min_odd = min(odds_list, key=lambda x: x['odds'])
+                    selections.append({"event": min_odd["event_id"], "odd": min_odd["odds"]})
+                    odds_list.remove(min_odd)
+            else:
+                return "Invalid mode!", 400
+            
+            coupon = {
+                "coupon_id": str(uuid.uuid4()),
+                "selections": selections,
+                "stake": stake,
+                "timestamp": str(datetime.datetime.now()),
+                "user_id": user_id
+            }
+            coupon = validate_coupon(coupon)
+            new_coupon = Coupon(coupon_id=coupon['coupon_id'],
+                                selections=coupon['selections'],
+                                stake=coupon['stake'],
+                                timestamp=coupon['timestamp'],
+                                user_id=coupon['user_id'])
+            coupons_to_disp.append(coupon)
+            coupons.append(new_coupon)
+        db_session.add_all(coupons)
         db_session.commit()
-        return coupons, 200
+        return coupons_to_disp, 200
     except Exception as e:
         error_message = str(e)
+        print(error_message)
         return error_message, 400
-
+        
 # FIND USER COUPONS    
 def find_coupons(user_id):
     wanted_user = User.query.filter_by(user_id=user_id).first()

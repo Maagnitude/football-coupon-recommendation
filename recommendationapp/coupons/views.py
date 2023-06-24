@@ -9,14 +9,13 @@ coupons = Blueprint('coupons', __name__, template_folder='templates/coupons')
 
 @coupons.route('/api/coupons', methods=['GET', 'POST'])
 def api_get_coupon():
-    user_info = request.get_json()
+    users_info = request.get_json()
     if request.method == 'POST':
         Session = sessionmaker(bind=db.engine)
         batch_session = Session()
-        coupon, code = create_coupon(user_info, batch_session)
+        result = create_coupon(users_info, batch_session)
         batch_session.close()
-        return jsonify(code, coupon)
-    return jsonify(user_info)
+        return {"result": result[-1]}
 
 @coupons.route('/coupons', methods=['GET', 'POST'])
 def get_coupon():
@@ -36,17 +35,15 @@ def get_coupon():
         }
         Session = sessionmaker(bind=db.engine)
         session = Session()
-        coupons, code = create_coupon(user_info, session)
+        coupons, code = create_coupon([user_info], session)
         session.close()
         if code == 400:
             return render_template('coupons.html', form=form, code=code)
         events = find_all_events()[0]
-        
-        if coupons is not list:
-            coupons = [coupons]
         from_form = 1
         return render_template('got_coupon.html', coupons=coupons, code=code, events=events, from_form=from_form)
     return render_template('coupons.html', form=form)
+
 
 @coupons.route('/got_coupon', methods=['GET', 'POST'])
 def got_coupon():
